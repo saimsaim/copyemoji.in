@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - CopyEmoji.in</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Page Specific Styles */
+        .content-box { max-width: 800px; margin: 40px auto; background: var(--card); padding: 40px; border-radius: var(--radius); box-shadow: var(--shadow); }
+        h2 { color: var(--primary); margin-bottom: 20px; font-size: 32px; }
+        p { line-height: 1.6; margin-bottom: 15px; font-size: 18px; color: var(--muted); }
+        ul { margin-left: 20px; margin-bottom: 20px; }
+        li { margin-bottom: 10px; font-size: 18px; color: var(--text); }
+        .back-btn { display: inline-block; margin-top: 20px; padding: 10px 20px; background: var(--primary); color: white; text-decoration: none; border-radius: 50px; font-weight: bold; }
+        .back-btn:hover { background: var(--primary-hover); }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="logo-area">
+            <h1>😊 CopyEmoji<span class="highlight">.in</span></h1>
+        </div>
+        <div class="controls">
+            <button id="theme-toggle">🌙</button>
+        </div>
+    </header>
+
+    <main class="main-wrapper">
+        <div class="content-box">
+            <h2>About CopyEmoji.in 🚀</h2>
+            <p>Welcome to <strong>CopyEmoji.in</strong>, the ultimate emoji tool designed specifically for developers, designers, and creators.</p>
+            
+            <p>Most emoji websites are slow, cluttered with ads, and lack productivity features. We decided to change that.</p>
+            
+            <h3>Why Use This Tool?</h3>
+            <ul>
+                <li>⚡ <strong>Blazing Fast:</strong> Instant search without page reloads.</li>
+                <li>🧠 <strong>Smart Dock:</strong> Copy multiple emojis at once (Stack Copy).</li>
+                <li>🎨 <strong>Skin Tone Support:</strong> Works perfectly with all modern emojis.</li>
+                <li>🖼️ <strong>PNG Download:</strong> Get high-quality transparent images for your designs.</li>
+                <li>🌚 <strong>Developer Friendly:</strong> Dark mode & Keyboard shortcuts built-in.</li>
+            </ul>
+
+            <h3>Meet the Developer 👨‍💻</h3>
+            <p>
+                Hi, I'm <strong>Saim Khalifa</strong>, a passionate PHP Developer. I built this tool to make your workflow smoother and faster. 
+                If you have any feedback or feature requests, feel free to reach out!
+            </p>
+
+            <a href="index.html" class="back-link">← Back to Home</a>
+        </div>
+    </main>
+
+    <footer class="footer">
+    <div class="footer-links" style="margin-bottom: 20px;">
+        <a href="about.html" style="margin: 0 10px; color: var(--muted); text-decoration: none; font-weight: 500;">About Us</a>
+        <a href="contact.html" style="margin: 0 10px; color: var(--muted); text-decoration: none; font-weight: 500;">Contact Us</a>
+        <a href="privacy.html" style="margin: 0 10px; color: var(--muted); text-decoration: none; font-weight: 500;">Privacy Policy</a>
+    </div>
+
+    <p>
+        &copy; 2025 - <span id="year"></span> <strong>CopyEmoji.in</strong> • Crafted with ❤️ by <span class="author-name">Saim Khalifa</span>
+    </p>
+</footer>
+
+<script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>

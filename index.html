@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>CopyEmoji.in - Best Emoji Tool for Devs 😎</title>
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="logo-area">
+            <h1>😊 CopyEmoji<span class="highlight">.in</span></h1>
+        </div>
+        
+        <div class="controls">
+            <div class="skin-tone-selector">
+                <button class="tone-btn active" data-tone="default" title="Default">✋</button>
+                <button class="tone-btn" data-tone="light" title="Light">✋🏻</button>
+                <button class="tone-btn" data-tone="medium-light" title="Medium-Light">✋🏼</button>
+                <button class="tone-btn" data-tone="medium" title="Medium">✋🏽</button>
+                <button class="tone-btn" data-tone="medium-dark" title="Medium-Dark">✋🏾</button>
+                <button class="tone-btn" data-tone="dark" title="Dark">✋🏿</button>
+            </div>
+            <button id="theme-toggle" aria-label="Toggle Dark Mode">🌙</button>
+        </div>
+    </header>
+
+    <main class="main-wrapper">
+        
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search emojis (Press '/' to focus)..." />
+            <span class="search-icon">🔍</span>
+        </div>
+
+        <div id="category-filters" class="category-filters"></div>
+
+        <div id="recently-copied-container" class="recently-copied" style="display:none;">
+            <span class="label">🚀 Recent:</span>
+            <div id="recently-copied-list"></div>
+        </div>
+
+        <div id="emoji-grid"></div>
+
+    </main>
+
+    <div id="clipboard-dock" class="floating-dock">
+        <div class="dock-content" id="dock-preview">
+            </div>
+        <div class="dock-actions">
+            <button id="dock-copy-btn">Copy All</button>
+            <button id="dock-clear-btn" title="Clear Stack">✖</button>
+        </div>
+    </div>
+
+  <footer class="footer">
+    <div class="footer-links" style="margin-bottom: 20px;">
+        <a href="about.html" style="margin: 0 10px; color: var(--muted); text-decoration: none; font-weight: 500;">About Us</a>
+        <a href="contact.html" style="margin: 0 10px; color: var(--muted); text-decoration: none; font-weight: 500;">Contact Us</a>
+        <a href="privacy.html" style="margin: 0 10px; color: var(--muted); text-decoration: none; font-weight: 500;">Privacy Policy</a>
+    </div>
+
+    <p>
+        &copy; 2025 - <span id="year"></span> <strong>CopyEmoji.in</strong> • Crafted with ❤️ by <span class="author-name">Saim Khalifa</span>
+    </p>
+</footer>
+
+<script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+    <div id="toast" class="toast">Copied!</div>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
