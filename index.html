@@ -3,11 +3,37 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    
     <title>CopyEmoji.in - Best Emoji Tool for Everyone 😎</title>
-        <link rel="canonical" href="https://copyemoji.in/">
-    <link rel="stylesheet" href="assets/css/style.css" />
+    <meta name="title" content="CopyEmoji.in - Best Emoji Tool for Everyone 😎">
+    <meta name="description" content="⚡ Fastest way to copy & paste emojis! Search, copy multiple emojis, and download PNGs. Dark mode supported. No ads, just emojis.">
+    <meta name="keywords" content="copy emoji, emoji picker, emoji copy paste, download emoji png, emoji keyboard, web emoji tool, emoji list">
+    <meta name="robots" content="index, follow">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="language" content="English">
+    <meta name="author" content="Saim Khalifa">
+    <link rel="canonical" href="https://copyemoji.in/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://copyemoji.in/">
+    <meta property="og:title" content="CopyEmoji.in - Copy & Paste Emojis Instantly 🚀">
+    <meta property="og:description" content="Simple, fast, and ad-free emoji copy tool. Supports skin tones and PNG download.">
+    <meta property="og:image" content="https://copyemoji.in/assets/images/preview-card.png">
+
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://copyemoji.in/">
+    <meta property="twitter:title" content="CopyEmoji.in - The Best Emoji Tool">
+    <meta property="twitter:description" content="Need an emoji? Copy it instantly from CopyEmoji.in. Fast, dark mode ready, and developer friendly.">
+    <meta property="twitter:image" content="https://copyemoji.in/assets/images/preview-card.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap" rel="stylesheet">
-</head>
+
+    <link rel="stylesheet" href="assets/css/style.css" />
+    
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>😊</text></svg>"></head>
 <body>
 
     <header class="navbar">
@@ -16,60 +42,73 @@
         </div>
         
         <div class="controls">
-            <div class="skin-tone-selector">
-                <button class="tone-btn active" data-tone="default" title="Default">✋</button>
-                <button class="tone-btn" data-tone="light" title="Light">✋🏻</button>
-                <button class="tone-btn" data-tone="medium-light" title="Medium-Light">✋🏼</button>
-                <button class="tone-btn" data-tone="medium" title="Medium">✋🏽</button>
-                <button class="tone-btn" data-tone="medium-dark" title="Medium-Dark">✋🏾</button>
-                <button class="tone-btn" data-tone="dark" title="Dark">✋🏿</button>
-            </div>
+           <div class="skin-tone-selector">
+    <button class="tone-btn active" data-tone="default" aria-label="Default Skin Tone" title="Default">✋</button>
+    <button class="tone-btn" data-tone="light" aria-label="Light Skin Tone" title="Light">✋🏻</button>
+    <button class="tone-btn" data-tone="medium-light" aria-label="Medium Light Skin Tone" title="Medium-Light">✋🏼</button>
+    <button class="tone-btn" data-tone="medium" aria-label="Medium Skin Tone" title="Medium">✋🏽</button>
+    <button class="tone-btn" data-tone="medium-dark" aria-label="Medium Dark Skin Tone" title="Medium-Dark">✋🏾</button>
+    <button class="tone-btn" data-tone="dark" aria-label="Dark Skin Tone" title="Dark">✋🏿</button>
+</div>
             <button id="theme-toggle" aria-label="Toggle Dark Mode">🌙</button>
         </div>
     </header>
 
     <main class="main-wrapper">
-        
         <div class="search-container">
-            <input type="text" id="search-input" placeholder="Search emojis (Press '/' to focus)..." />
-            <span class="search-icon">🔍</span>
+            <input type="text" id="search-input" aria-label="Search emojis" placeholder="Search emojis (Press '/' to focus)..." />
+            <span class="search-icon" aria-hidden="true">🔍</span>
         </div>
 
         <div id="category-filters" class="category-filters"></div>
 
-        <div id="recently-copied-container" class="recently-copied" style="display:none;">
+        <div id="recently-copied-container" class="recently-copied">
             <span class="label">🚀 Recent:</span>
-            <div id="recently-copied-list"></div>
+            <div id="recently-copied-list">
+                <span class="placeholder-text">Recently used emojis will appear here...</span>
+            </div>
         </div>
 
-        <div id="emoji-grid"></div>
+        <div id="emoji-grid">
+            <div class="emoji-skeleton"></div>
+            <div class="emoji-skeleton"></div>
+            <div class="emoji-skeleton"></div>
+            <div class="emoji-skeleton"></div>
+            <div class="emoji-skeleton"></div>
+            <div class="emoji-skeleton"></div>
+            <div class="emoji-skeleton"></div>
+            <div class="emoji-skeleton"></div>
+            <div class="emoji-skeleton"></div>
+            <div class="emoji-skeleton"></div>
+            <div class="emoji-skeleton"></div>
+            <div class="emoji-skeleton"></div>
+        </div>
 
     </main>
 
     <div id="clipboard-dock" class="floating-dock">
-        <div class="dock-content" id="dock-preview">
-            </div>
+        <div class="dock-content" id="dock-preview"></div>
         <div class="dock-actions">
             <button id="dock-copy-btn">Copy All</button>
-            <button id="dock-clear-btn" title="Clear Stack">✖</button>
+            <button id="dock-clear-btn" aria-label="Clear Stack" title="Clear Stack">✖</button>
         </div>
     </div>
 
-  <footer class="footer">
-    <div class="footer-links" style="margin-bottom: 20px;">
-        <a href="about.html" style="margin: 0 10px; color: var(--muted); text-decoration: none; font-weight: 500;">About Us</a>
-        <a href="contact.html" style="margin: 0 10px; color: var(--muted); text-decoration: none; font-weight: 500;">Contact Us</a>
-        <a href="privacy.html" style="margin: 0 10px; color: var(--muted); text-decoration: none; font-weight: 500;">Privacy Policy</a>
-    </div>
+    <footer class="footer">
+        <div class="footer-links" style="margin-bottom: 20px;">
+            <a href="about.html" style="margin: 0 10px; color: var(--muted); text-decoration: none; font-weight: 500;">About Us</a>
+            <a href="contact.html" style="margin: 0 10px; color: var(--muted); text-decoration: none; font-weight: 500;">Contact Us</a>
+            <a href="privacy.html" style="margin: 0 10px; color: var(--muted); text-decoration: none; font-weight: 500;">Privacy Policy</a>
+        </div>
 
-    <p>
-        &copy; 2025 - <span id="year"></span> <strong>CopyEmoji.in</strong> • Crafted with ❤️ by <span class="author-name">Saim Khalifa</span>
-    </p>
-</footer>
+        <p>
+            © 2025 - <span id="year"></span> <strong>CopyEmoji.in</strong> • Crafted with ❤️ by <span class="author-name">Saim Khalifa</span>
+        </p>
+    </footer>
 
-<script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-</script>
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
 
     <div id="toast" class="toast">Copied!</div>
 

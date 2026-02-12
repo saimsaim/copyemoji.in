@@ -17,19 +17,21 @@ let allEmojis = [];
 let recentlyCopied = JSON.parse(localStorage.getItem('recentlyCopied')) || [];
 let dockStack = [];
 let currentSkinTone = "";
+let currentRequestId; 
+
+// Mobile Check
+const isMobile = window.innerWidth < 768;
 
 const skinTones = {
     "default": "", "light": "\u{1F3FB}", "medium-light": "\u{1F3FC}",
     "medium": "\u{1F3FD}", "medium-dark": "\u{1F3FE}", "dark": "\u{1F3FF}"
 };
-
 const categoryIcons = {
     "Smileys & Emotion": "😀", "People & Body": "👋", "Animals & Nature": "🐻",
     "Food & Drink": "🍔", "Travel & Places": "🚗", "Activities": "⚽",
     "Objects": "💡", "Symbols": "🔣", "Flags": "🏳️", "Component": "🧱"
 };
 
-/* 🚀 INIT */
 document.addEventListener('DOMContentLoaded', () => {
     if(localStorage.getItem('theme')==='dark') document.body.classList.add('dark');
     if(themeToggle) {
@@ -42,64 +44,48 @@ document.addEventListener('DOMContentLoaded', () => {
     const yearSpan = document.getElementById('year');
     if(yearSpan) yearSpan.textContent = new Date().getFullYear();
 
+    // 🔥 FIX: Remove delay. Load immediately for LCP.
     if(emojiGrid) loadEmojiData();
+    
     if(contactForm) initContactForm();
 
-    // ✨ GREETING START (Fire Border + HI)
     window.addEventListener("load", () => {
-    setTimeout(greetUserSimple, 1500);
+        // Defer non-critical toast even further
+        setTimeout(greetUserSimple, 4000);
+    });
 });
-
-});
-
-
 
 function greetUserSimple() {
     const today = new Date().toDateString();
     const lastVisit = localStorage.getItem("lastVisitDate");
-
     if (lastVisit === today) return;
-
     localStorage.setItem("lastVisitDate", today);
 
     const toast = document.createElement("div");
     toast.textContent = "👋 Welcome back!";
-    toast.style.position = "fixed";
-    toast.style.bottom = "20px";
-    toast.style.left = "50%";
-    toast.style.transform = "translateX(-50%)";
-    toast.style.background = "#222";
-    toast.style.color = "#fff";
-    toast.style.padding = "10px 16px";
-    toast.style.borderRadius = "20px";
-    toast.style.fontSize = "14px";
-    toast.style.boxShadow = "0 4px 10px rgba(0,0,0,0.2)";
-    toast.style.zIndex = "9999";
-    toast.style.opacity = "0";
-    toast.style.transition = "opacity 0.4s ease";
+    Object.assign(toast.style, {
+        position: "fixed", bottom: "20px", left: "50%", transform: "translateX(-50%)",
+        background: "#222", color: "#fff", padding: "10px 16px", borderRadius: "20px",
+        fontSize: "14px", boxShadow: "0 4px 10px rgba(0,0,0,0.2)", zIndex: "9999",
+        opacity: "0", transition: "opacity 0.4s ease"
+    });
 
     document.body.appendChild(toast);
-
-    // Fade in
-    setTimeout(() => {
-        toast.style.opacity = "1";
-    }, 200);
-
-    // Auto remove
+    requestAnimationFrame(() => toast.style.opacity = "1");
     setTimeout(() => {
         toast.style.opacity = "0";
         setTimeout(() => toast.remove(), 400);
     }, 3000);
 }
 
-
 function loadEmojiData() {
     fetch('assets/data/emoji.json')
     .then(r => r.json())
     .then(data => {
         allData = data; 
-        allEmojis = [];
-        data.forEach(cat => { if(cat.emojis) allEmojis = allEmojis.concat(cat.emojis); });
+        allEmojis = data.flatMap(cat => cat.emojis || []);
+        
+        // Critical Render Path
         renderCategoryButtons();
         renderEmojis(allEmojis);
         renderRecent();
@@ -109,7 +95,8 @@ function loadEmojiData() {
 
 function renderCategoryButtons() {
     if(!categoryFilters) return;
-    categoryFilters.innerHTML = '';
+    const fragment = document.createDocumentFragment();
+    
     const allBtn = document.createElement('button');
     allBtn.className = 'category-btn active';
     allBtn.innerHTML = `<span class="cat-icon">⚡</span> All`; 
@@ -118,7 +105,7 @@ function renderCategoryButtons() {
         allBtn.classList.add('active');
         searchInput.value = ''; renderEmojis(allEmojis);
     };
-    categoryFilters.appendChild(allBtn);
+    fragment.appendChild(allBtn);
 
     allData.forEach(cat => {
         if (!cat.emojis || cat.emojis.length === 0) return;
@@ -130,11 +117,13 @@ function renderCategoryButtons() {
             btn.classList.add('active');
             searchInput.value = ''; renderEmojis(cat.emojis);
         };
-        categoryFilters.appendChild(btn);
+        fragment.appendChild(btn);
     });
+    
+    categoryFilters.innerHTML = '';
+    categoryFilters.appendChild(fragment);
 }
 
-let currentRequestId;
 function renderEmojis(list) {
     if (currentRequestId) cancelAnimationFrame(currentRequestId);
     if (!emojiGrid) return;
@@ -146,43 +135,71 @@ function renderEmojis(list) {
     }
     
     let index = 0;
-    const chunkSize = 200;
+    
+    // 🔥 HYBRID STRATEGY
+    // Step 1: Render first 50 items SYNCHRONOUSLY (Fixes LCP Red Score)
+    const initialChunkSize = 50; 
+    const subsequentChunkSize = isMobile ? 40 : 150; // Keeps TBT Low
 
+    // Render first chunk immediately
+    const firstChunk = list.slice(0, initialChunkSize);
+    appendChunk(firstChunk);
+    index += initialChunkSize;
+
+    // Step 2: Render the rest with breathing room
     function loadNextChunk() {
         if (index >= list.length) return;
-        const chunk = list.slice(index, index + chunkSize);
-        const fragment = document.createDocumentFragment();
-
-        chunk.forEach(item => {
-            let char = item.emoji;
-            if (currentSkinTone && isSkinToneSupported(char)) {
-                char = char.replace(/\uFE0F/g, '') + currentSkinTone;
-            }
-
-            const div = document.createElement('div');
-            div.className = 'emoji-item';
-            div.title = item.name;
-            div.innerHTML = `<span class="emoji-char">${char}</span><button class="download-btn">⬇ PNG</button>`;
-            div.onclick = () => handleEmojiClick(char, div);
-            div.querySelector('.download-btn').onclick = (e) => {
-                e.stopPropagation();
-                downloadEmoji(char, item.name);
-            };
-            fragment.appendChild(div);
-        });
-
-        emojiGrid.appendChild(fragment);
-        index += chunkSize;
+        
+        const chunk = list.slice(index, index + subsequentChunkSize);
+        appendChunk(chunk);
+        
+        index += subsequentChunkSize;
         currentRequestId = requestAnimationFrame(loadNextChunk);
     }
-    loadNextChunk();
+
+    // Start background loading after a tiny delay to let LCP paint
+    if (index < list.length) {
+        setTimeout(() => {
+            currentRequestId = requestAnimationFrame(loadNextChunk);
+        }, 50);
+    }
 }
 
+// Helper to reduce code duplication
+function appendChunk(chunk) {
+    const fragment = document.createDocumentFragment();
+    chunk.forEach(item => {
+        let char = item.emoji;
+        if (currentSkinTone && isSkinToneSupported(char)) {
+            char = char.replace(/\uFE0F/g, '') + currentSkinTone;
+        }
+
+        const div = document.createElement('div');
+        div.className = 'emoji-item';
+        div.title = item.name;
+        div.innerHTML = `<span class="emoji-char">${char}</span><button class="download-btn" aria-label="Download PNG">⬇ PNG</button>`;
+        
+        div.onclick = () => handleEmojiClick(char, div);
+        div.querySelector('.download-btn').onclick = (e) => {
+            e.stopPropagation();
+            downloadEmoji(char, item.name);
+        };
+        fragment.appendChild(div);
+    });
+    emojiGrid.appendChild(fragment);
+}
+
+// Debounce Search Input
+let debounceTimer;
 if(searchInput) {
     searchInput.addEventListener('input', (e) => {
-        document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
-        const filtered = allEmojis.filter(item => item.name.toLowerCase().includes(e.target.value.toLowerCase()));
-        renderEmojis(filtered);
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+            const term = e.target.value.toLowerCase();
+            const filtered = allEmojis.filter(item => item.name.toLowerCase().includes(term));
+            renderEmojis(filtered);
+        }, 300);
     });
 }
 
@@ -208,74 +225,42 @@ function handleEmojiClick(char, element) {
     addToDock(char);
     showToast(`Copied: ${char}`);
 
-    if (element && dock) {
-        const startRect = element.getBoundingClientRect();
-        const startX = startRect.left + startRect.width / 2;
-        const startY = startRect.top + startRect.height / 2;
-
-        const dockRect = dock.getBoundingClientRect();
-        const endX = dockRect.left + dockRect.width / 2;
-        const endY = dockRect.top + dockRect.height / 2;
-
-        const floater = document.createElement('div');
-        floater.innerText = char;
-        floater.className = 'spiral-emoji';
-        floater.style.position = 'fixed';
-        floater.style.left = `${startX}px`;
-        floater.style.top = `${startY}px`;
-        floater.style.zIndex = '9999';
-        floater.style.pointerEvents = 'none';
-        document.body.appendChild(floater);
-
-        const moves = ['sidha', 'aada-teda', 'spiral', 'extreme-spin'];
-        const randomMove = moves[Math.floor(Math.random() * moves.length)];
-
-        setTimeout(() => {
-            floater.style.transition = 'all 1.2s cubic-bezier(0.42, 0, 0.58, 1)';
-            if (randomMove === 'sidha') {
-                floater.style.left = `${endX}px`;
-                floater.style.top = `${endY}px`;
-                floater.style.transform = 'scale(0.3)';
-            } else if (randomMove === 'aada-teda') {
-                floater.style.left = `${startX + (endX - startX) * 0.5 + 150}px`;
-                floater.style.top = `${startY - 100}px`;
-                floater.style.transform = 'rotate(-45deg) scale(1.5)';
-                setTimeout(() => {
-                    floater.style.left = `${endX}px`;
-                    floater.style.top = `${endY}px`;
-                    floater.style.transform = 'rotate(0deg) scale(0.2)';
-                }, 500);
-            } else if (randomMove === 'spiral') {
-                floater.style.left = `${startX + (endX - startX) * 0.5}px`;
-                floater.style.top = `${startY - 250}px`;
-                floater.style.transform = 'rotate(360deg) scale(2)';
-                setTimeout(() => {
-                    floater.style.left = `${endX}px`;
-                    floater.style.top = `${endY}px`;
-                    floater.style.transform = 'rotate(720deg) scale(0.1)';
-                }, 600);
-            } else if (randomMove === 'extreme-spin') {
-                floater.classList.add('super-spin');
-                floater.style.left = `${endX}px`;
-                floater.style.top = `${endY}px`;
-                floater.style.transitionDuration = '1.5s';
-                floater.style.transform = 'scale(0.1)';
-            }
-            floater.style.opacity = '0';
-        }, 50);
-
-        setTimeout(() => {
-            floater.remove();
-            dock.style.transform = "translateX(-50%) scale(1.2)";
-            setTimeout(() => dock.style.transform = "translateX(-50%) scale(1)", 200);
-        }, 1500);
+    if (element && dock && !isMobile) {
+        runFlyingAnimation(char, element);
     }
+}
+
+function runFlyingAnimation(char, element) {
+    const startRect = element.getBoundingClientRect();
+    const dockRect = dock.getBoundingClientRect();
+    
+    const floater = document.createElement('div');
+    floater.innerText = char;
+    floater.className = 'spiral-emoji';
+    Object.assign(floater.style, {
+        position: 'fixed', left: `${startRect.left + startRect.width/2}px`,
+        top: `${startRect.top + startRect.height/2}px`, zIndex: '9999', pointerEvents: 'none'
+    });
+    
+    document.body.appendChild(floater);
+    
+    setTimeout(() => {
+        floater.style.transition = 'all 0.8s ease-in-out';
+        floater.style.left = `${dockRect.left + dockRect.width/2}px`;
+        floater.style.top = `${dockRect.top + dockRect.height/2}px`;
+        floater.style.transform = 'scale(0.1)';
+        floater.style.opacity = '0';
+    }, 50);
+
+    setTimeout(() => floater.remove(), 1000);
 }
 
 function renderRecent() {
     if (!recentContainer || !recentList) return;
-    if (recentlyCopied.length === 0) { recentContainer.style.display = 'none'; return; }
-    recentContainer.style.display = 'block';
+    if (recentlyCopied.length === 0) { 
+        recentList.innerHTML = '<span class="placeholder-text">Recently used emojis will appear here...</span>';
+        return;
+    }
     recentList.innerHTML = '';
     recentlyCopied.forEach(char => {
         const div = document.createElement('div');
@@ -295,6 +280,7 @@ function addRecent(char) {
 
 function addToDock(char) { dockStack.push(char); updateDockUI(); }
 function removeFromDock(index) { dockStack.splice(index, 1); updateDockUI(); }
+
 function updateDockUI() {
     if(!dockPreview || !dock) return;
     dockPreview.innerHTML = '';
@@ -303,21 +289,27 @@ function updateDockUI() {
         dockStack.forEach((emoji, index) => {
             const chip = document.createElement('div');
             chip.className = 'dock-item';
-            chip.innerHTML = `${emoji} <span class="dock-remove">×</span>`;
+            chip.innerHTML = `${emoji} <span class="dock-remove" aria-label="Remove">×</span>`;
             chip.querySelector('.dock-remove').onclick = (e) => { e.stopPropagation(); removeFromDock(index); };
             dockPreview.appendChild(chip);
         });
     } else { dock.classList.remove('visible'); }
 }
+
 function clearDock() { dockStack = []; updateDockUI(); }
 
-if(dockCopyBtn) dockCopyBtn.onclick = () => { if(dockStack.length) navigator.clipboard.writeText(dockStack.join(' ')); showToast('Stack Copied!'); };
+if(dockCopyBtn) dockCopyBtn.onclick = () => { 
+    if(dockStack.length) {
+        navigator.clipboard.writeText(dockStack.join(' '));
+        showToast('Stack Copied!'); 
+    }
+};
 if(dockClearBtn) dockClearBtn.onclick = clearDock;
 
 function showToast(msg) { 
     if(!toast) return;
     toast.textContent = msg; 
-    toast.classList.add('show'); 
+    toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 2000); 
 }
 
@@ -325,7 +317,8 @@ function downloadEmoji(emoji, name) {
     const canvas = document.createElement("canvas"); const ctx = canvas.getContext("2d");
     canvas.width = 512; canvas.height = 512;
     ctx.font = "400px 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif";
-    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
     ctx.fillText(emoji, canvas.width/2, canvas.height/2 + 40);
     const link = document.createElement("a");
     link.download = `emoji-${name ? name.replace(/\s+/g, '-').toLowerCase() : 'icon'}.png`;
@@ -350,78 +343,78 @@ function initContactForm() {
             let json = await response.json();
             if (response.status == 200) {
                 result.style.display = "block"; result.style.color = "green";
-                result.innerHTML = "Message Sent Successfully! ✅"; contactForm.reset();
+                result.innerHTML = "Message Sent Successfully! ✅"; 
+                contactForm.reset();
             } else {
                 result.style.display = "block"; result.style.color = "red";
                 result.innerHTML = json.message;
             }
         })
-        .catch(error => { result.style.display = "block"; result.style.color = "red"; result.innerHTML = "Something went wrong!"; })
-        .then(() => { btn.innerHTML = "Send Message 🚀"; btn.disabled = false; setTimeout(() => { result.style.display = "none"; }, 5000); });
+        .catch(error => { 
+            result.style.display = "block";
+            result.style.color = "red"; result.innerHTML = "Something went wrong!"; 
+        })
+        .then(() => { 
+            btn.innerHTML = "Send Message 🚀"; btn.disabled = false; 
+            setTimeout(() => { result.style.display = "none"; }, 5000); 
+        });
     });
 }
 
-
-const trailEmojis = ['✨', '🔥', '🚀', '⭐', '⚡', '🌈'];
-let lastX = 0;
-let lastY = 0;
-
-// Sirf Desktop (Width > 1024px) pe chalega
-if (window.matchMedia("(min-width: 1024px)").matches) {
+// =========================================
+// 🖱️ MOUSE TRAIL & 🃏 3D TILT EFFECT
+// =========================================
+if (!isMobile) {
+    const trailEmojis = ['✨', '🔥', '🚀', '⭐', '⚡', '🌈'];
+    let lastX = 0, lastY = 0;
+    
+    // 1. Mouse Trail Logic
     document.addEventListener('mousemove', (e) => {
         const distance = Math.hypot(e.clientX - lastX, e.clientY - lastY);
-        
-        // Thoda distance badha diya (30px) taaki aur smooth chale
         if (distance > 30) { 
             createTrail(e.clientX, e.clientY);
             lastX = e.clientX;
             lastY = e.clientY;
         }
     });
-}
 
-function createTrail(x, y) {
-    const el = document.createElement('div');
-    el.className = 'trail-emoji';
-    el.innerText = trailEmojis[Math.floor(Math.random() * trailEmojis.length)];
-    el.style.left = x + 'px';
-    el.style.top = y + 'px';
-    
-    document.body.appendChild(el);
-    
-    // Animation ke baad saaf-safayi
-    setTimeout(() => el.remove(), 800);
-}
+    function createTrail(x, y) {
+        const el = document.createElement('div');
+        el.className = 'trail-emoji';
+        el.innerText = trailEmojis[Math.floor(Math.random() * trailEmojis.length)];
+        el.style.left = x + 'px';
+        el.style.top = y + 'px';
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 800);
+    }
 
+    // 2. 🃏 3D Tilt Logic (Restored)
+    const grid = document.getElementById('emoji-grid');
+    if (grid) {
+        grid.addEventListener('mousemove', (e) => {
+            const card = e.target.closest('.emoji-item');
+            if (!card) return;
 
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left; 
+            const y = e.clientY - rect.top;
 
-// Ye sirf Desktop pe chalega taaki Mobile pe battery bache
-if (window.matchMedia("(min-width: 1024px)").matches) {
-    
-    // Event Delegation use kar rahe hain taaki performance top rahe
-    document.getElementById('emoji-grid').addEventListener('mousemove', (e) => {
-        const card = e.target.closest('.emoji-item');
-        if (!card) return;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
 
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left; // Mouse X position card ke andar
-        const y = e.clientY - rect.top;  // Mouse Y position card ke andar
+            // Tilt calculation (Max 15deg)
+            const rotateX = ((y - centerY) / centerY) * -15; 
+            const rotateY = ((x - centerX) / centerX) * 15;
 
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+        });
 
-        // Kitna tilt chahiye (Jyada mat rakhna varna ajeeb lagega)
-        const rotateX = ((y - centerY) / centerY) * -15; 
-        const rotateY = ((x - centerX) / centerX) * 15;
-
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
-    });
-
-    // Mouse hatne pe wapas normal position
-    document.getElementById('emoji-grid').addEventListener('mouseleave', (e) => {
-        const card = e.target.closest('.emoji-item');
-        if (card) {
-            card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`;
-        }
-    }, true);
+        // Reset on mouse leave
+        grid.addEventListener('mouseleave', (e) => {
+            const card = e.target.closest('.emoji-item');
+            if (card) {
+                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`;
+            }
+        }, true);
+    }
 }
