@@ -62,10 +62,22 @@ document.addEventListener('DOMContentLoaded', () => {
    ========================================= */
 
 function greetUserWithEmoji() {
+    // 📅 AAJ KI DATE CHECK KARO
+    const today = new Date().toDateString();
+    const lastVisit = localStorage.getItem('lastGreetDate');
+
+    // Agar user aaj pehli baar aaya hai tabhi aage badho
+    if (lastVisit === today) {
+        return; // Logic yahi stop kar do
+    }
+
+    // Aaj ki date save kar lo taaki agli baar na dikhe
+    localStorage.setItem('lastGreetDate', today);
+
     const centerX = window.innerWidth / 2;
     const centerY = window.innerHeight / 2;
 
-    // 1. Setup Elements (Overlay & Welcome Text Only)
+    // 1. Elements create karo (Overlay & Welcome Text)
     const blurOverlay = document.createElement('div');
     blurOverlay.className = 'greet-overlay';
     document.body.appendChild(blurOverlay);
@@ -75,12 +87,12 @@ function greetUserWithEmoji() {
     welcomeTxt.innerText = "Welcome to CopyEmoji.in 🚀";
     document.body.appendChild(welcomeTxt);
     
-    // Blur Dikhao
+    // Blur dikhao
     setTimeout(() => {
         blurOverlay.classList.add('show');
     }, 100);
 
-    // 2. 🔥 "HI" Grid Coordinates
+    // 2. "HI" Grid Coordinates
     const points = [
         {x: -195, y: -130}, {x: -195, y: -80}, {x: -195, y: -30}, {x: -195, y: 20}, {x: -195, y: 70}, {x: -195, y: 120}, 
         {x: -145, y: -10}, {x: -95, y: -10}, {x: -45, y: -10}, 
@@ -92,7 +104,7 @@ function greetUserWithEmoji() {
     const randomEmojis = ['🔥', '🚀', '😎', '✨', '🎉', '💪', '👑', '⚡'];
     const greetElements = [];
 
-    // Emojis Pop-up
+    // Emojis pop-up
     points.forEach((p, i) => {
         setTimeout(() => {
             const el = document.createElement('div');
@@ -110,17 +122,15 @@ function greetUserWithEmoji() {
         }, i * 40);
     });
 
-    // 3. ✨ SMOOTH EXIT (Box aur Scatter ke bina)
+    // 3. ✨ SMOOTH EXIT
     setTimeout(() => {
         blurOverlay.classList.remove('show');
         welcomeTxt.classList.remove('show');
 
-        // Emojis ko upar bhej ke gayab karo
         greetElements.forEach(el => {
             el.classList.add('greet-exit');
         });
 
-        // Cleanup
         setTimeout(() => {
             greetElements.forEach(el => el.remove());
             blurOverlay.remove();
