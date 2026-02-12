@@ -1,7 +1,3 @@
-/* =========================================
-   🚀 CopyEmoji.in - FINAL LOGIC (Restored + Greet + Fire)
-   ========================================= */
-
 const emojiGrid = document.getElementById('emoji-grid');
 const searchInput = document.getElementById('search-input');
 const categoryFilters = document.getElementById('category-filters');
@@ -50,93 +46,50 @@ document.addEventListener('DOMContentLoaded', () => {
     if(contactForm) initContactForm();
 
     // ✨ GREETING START (Fire Border + HI)
-    greetUserWithEmoji();
+    window.addEventListener("load", () => {
+    setTimeout(greetUserSimple, 1500);
 });
 
-/* assets/js/main.js - Fixed Pro Greet */
-/* assets/js/main.js - Welcome + Fly-out Fixed */
-/* assets/js/main.js - Greet Fixed (No Scatter) */
+});
 
-/* =========================================
-   🚀 CopyEmoji.in - Greet Logic (Box Removed)
-   ========================================= */
 
-function greetUserWithEmoji() {
-    // 📅 AAJ KI DATE CHECK KARO
+
+function greetUserSimple() {
     const today = new Date().toDateString();
-    const lastVisit = localStorage.getItem('lastGreetDate');
+    const lastVisit = localStorage.getItem("lastVisitDate");
 
-    // Agar user aaj pehli baar aaya hai tabhi aage badho
-    if (lastVisit === today) {
-        return; // Logic yahi stop kar do
-    }
+    if (lastVisit === today) return;
 
-    // Aaj ki date save kar lo taaki agli baar na dikhe
-    localStorage.setItem('lastGreetDate', today);
+    localStorage.setItem("lastVisitDate", today);
 
-    const centerX = window.innerWidth / 2;
-    const centerY = window.innerHeight / 2;
+    const toast = document.createElement("div");
+    toast.textContent = "👋 Welcome back!";
+    toast.style.position = "fixed";
+    toast.style.bottom = "20px";
+    toast.style.left = "50%";
+    toast.style.transform = "translateX(-50%)";
+    toast.style.background = "#222";
+    toast.style.color = "#fff";
+    toast.style.padding = "10px 16px";
+    toast.style.borderRadius = "20px";
+    toast.style.fontSize = "14px";
+    toast.style.boxShadow = "0 4px 10px rgba(0,0,0,0.2)";
+    toast.style.zIndex = "9999";
+    toast.style.opacity = "0";
+    toast.style.transition = "opacity 0.4s ease";
 
-    // 1. Elements create karo (Overlay & Welcome Text)
-    const blurOverlay = document.createElement('div');
-    blurOverlay.className = 'greet-overlay';
-    document.body.appendChild(blurOverlay);
+    document.body.appendChild(toast);
 
-    const welcomeTxt = document.createElement('div');
-    welcomeTxt.className = 'welcome-text';
-    welcomeTxt.innerText = "Welcome to CopyEmoji.in 🚀";
-    document.body.appendChild(welcomeTxt);
-    
-    // Blur dikhao
+    // Fade in
     setTimeout(() => {
-        blurOverlay.classList.add('show');
-    }, 100);
+        toast.style.opacity = "1";
+    }, 200);
 
-    // 2. "HI" Grid Coordinates
-    const points = [
-        {x: -195, y: -130}, {x: -195, y: -80}, {x: -195, y: -30}, {x: -195, y: 20}, {x: -195, y: 70}, {x: -195, y: 120}, 
-        {x: -145, y: -10}, {x: -95, y: -10}, {x: -45, y: -10}, 
-        {x: 5, y: -130}, {x: 5, y: -80}, {x: 5, y: -30}, {x: 5, y: 20}, {x: 5, y: 70}, {x: 5, y: 120},
-        {x: 145, y: -130}, {x: 145, y: -80}, {x: 145, y: -30}, {x: 145, y: 20}, {x: 145, y: 70}, {x: 145, y: 120},
-        {x: 95, y: -130}, {x: 195, y: -130}, {x: 95, y: 120}, {x: 195, y: 120}
-    ];
-
-    const randomEmojis = ['🔥', '🚀', '😎', '✨', '🎉', '💪', '👑', '⚡'];
-    const greetElements = [];
-
-    // Emojis pop-up
-    points.forEach((p, i) => {
-        setTimeout(() => {
-            const el = document.createElement('div');
-            el.className = 'greet-emoji';
-            el.innerText = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
-            el.style.left = (centerX + p.x) + 'px';
-            el.style.top = (centerY + p.y) + 'px';
-            el.style.transform = 'translate(-50%, -50%)';
-            document.body.appendChild(el);
-            greetElements.push(el);
-
-            if (i === points.length - 1) {
-                setTimeout(() => welcomeTxt.classList.add('show'), 300);
-            }
-        }, i * 40);
-    });
-
-    // 3. ✨ SMOOTH EXIT
+    // Auto remove
     setTimeout(() => {
-        blurOverlay.classList.remove('show');
-        welcomeTxt.classList.remove('show');
-
-        greetElements.forEach(el => {
-            el.classList.add('greet-exit');
-        });
-
-        setTimeout(() => {
-            greetElements.forEach(el => el.remove());
-            blurOverlay.remove();
-            welcomeTxt.remove();
-        }, 1000);
-    }, 2000); 
+        toast.style.opacity = "0";
+        setTimeout(() => toast.remove(), 400);
+    }, 3000);
 }
 
 
@@ -408,13 +361,6 @@ function initContactForm() {
     });
 }
 
-/* =========================================
-   🖱️ MOUSE TRAIL LOGIC
-   ========================================= */
-
-/* =========================================
-   🖱️ MOUSE TRAIL (Performance Optimized)
-   ========================================= */
 
 const trailEmojis = ['✨', '🔥', '🚀', '⭐', '⚡', '🌈'];
 let lastX = 0;
@@ -448,9 +394,6 @@ function createTrail(x, y) {
 }
 
 
-/* =========================================
-   🃏 3D TILT LOGIC (Performance Friendly)
-   ========================================= */
 
 // Ye sirf Desktop pe chalega taaki Mobile pe battery bache
 if (window.matchMedia("(min-width: 1024px)").matches) {
