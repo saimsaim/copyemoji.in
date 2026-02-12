@@ -146,7 +146,7 @@ input, textarea { width: 100%; padding: 12px; border: 1px solid rgba(0,0,0,0.1);
    🚀 SUPER POP ANIMATION (Game Style)
    ========================================= */
 
-/* .floating-emoji {
+.floating-emoji {
   position: fixed;
   font-size: 30px; /* Start size */
   pointer-events: none; /* Click through */
