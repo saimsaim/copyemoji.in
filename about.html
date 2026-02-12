@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Learn more about CopyEmoji.in. Built by Saim Khalifa for developers and creators to copy emojis instantly.">
     <title>About Us - CopyEmoji.in</title>
-
     <link rel="canonical" href="https://copyemoji.in/about.html">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,10 +25,12 @@
 
     <header class="navbar">
         <div class="logo-area">
-            <h1>😊 CopyEmoji<span class="highlight">.in</span></h1>
+            <a href="/" style="text-decoration: none; color: inherit;">
+                <h1>😊 CopyEmoji<span class="highlight">.in</span></h1>
+            </a>
         </div>
         <div class="controls">
-            <button id="theme-toggle">🌙</button>
+            <button id="theme-toggle" aria-label="Toggle Dark Mode">🌙</button>
         </div>
     </header>
 
@@ -52,11 +52,10 @@
 
             <h3>Meet the Developer 👨‍💻</h3>
             <p>
-                Hi, I'm <strong>Saim Khalifa</strong>, a passionate PHP Developer. I built this tool to make your workflow smoother and faster. 
-                If you have any feedback or feature requests, feel free to reach out!
+                Hi, I'm <strong>Saim Khalifa</strong>, a passionate PHP Developer. I built this tool to make your workflow smoother and faster. If you have any feedback or feature requests, feel free to reach out!
             </p>
 
-            <a href="index.html" class="back-link">← Back to Home</a>
+            <a href="/" class="back-link">← Back to Home</a>
         </div>
     </main>
 
@@ -65,6 +64,8 @@
         <a href="about.html" style="margin: 0 10px; color: var(--muted); text-decoration: none; font-weight: 500;">About Us</a>
         <a href="contact.html" style="margin: 0 10px; color: var(--muted); text-decoration: none; font-weight: 500;">Contact Us</a>
         <a href="privacy.html" style="margin: 0 10px; color: var(--muted); text-decoration: none; font-weight: 500;">Privacy Policy</a>
+        <a href="terms.html" style="margin: 0 10px; color: var(--muted); text-decoration: none; font-weight: 500;">Terms</a>
+        <a href="disclaimer.html" style="margin: 0 10px; color: var(--muted); text-decoration: none; font-weight: 500;">Disclaimer</a>
     </div>
 
     <p>
@@ -72,8 +73,9 @@
     </p>
 </footer>
 
-<script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-</script>
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+    <script src="assets/js/main.js"></script>
 </body>
 </html>

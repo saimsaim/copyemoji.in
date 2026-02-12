@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Contact CopyEmoji.in team. Have feedback or feature requests? We'd love to hear from you.">
     <title>Contact Us - CopyEmoji.in</title>
     <link rel="canonical" href="https://copyemoji.in/contact.html">
     <link rel="stylesheet" href="assets/css/style.css">
@@ -14,8 +13,14 @@
 </head>
 <body>
     <header class="navbar">
-        <div class="logo-area"><h1>😊 CopyEmoji<span class="highlight">.in</span></h1></div>
-        <div class="controls"><button id="theme-toggle">🌙</button></div>
+        <div class="logo-area">
+            <a href="/" style="text-decoration: none; color: inherit;">
+                <h1>😊 CopyEmoji<span class="highlight">.in</span></h1>
+            </a>
+        </div>
+        <div class="controls">
+            <button id="theme-toggle" aria-label="Toggle Dark Mode">🌙</button>
+        </div>
     </header>
 
     <main class="main-wrapper">
@@ -26,14 +31,17 @@
             <form id="contact-form">
                 <input type="hidden" name="access_key" value="TERI_ACCESS_KEY_DAAL">
                 <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+                
                 <div class="form-group"><label>Name</label><input type="text" name="name" required></div>
                 <div class="form-group"><label>Email</label><input type="email" name="email" required></div>
                 <div class="form-group"><label>Message</label><textarea name="message" rows="5" required></textarea></div>
+                
                 <button type="submit" class="submit-btn" id="form-btn">Send Message 🚀</button>
                 <p id="form-result" style="text-align: center; margin-top: 15px; font-weight: bold; display: none;"></p>
             </form>
+            
             <div style="text-align: center; margin-top: 30px;">
-            <a href="index.html" class="back-link">← Back to Home</a>
+                <a href="/" class="back-link">← Back to Home</a>
             </div>
         </div>
     </main>
@@ -43,6 +51,8 @@
         <a href="about.html" style="margin: 0 10px; color: var(--muted); text-decoration: none; font-weight: 500;">About Us</a>
         <a href="contact.html" style="margin: 0 10px; color: var(--muted); text-decoration: none; font-weight: 500;">Contact Us</a>
         <a href="privacy.html" style="margin: 0 10px; color: var(--muted); text-decoration: none; font-weight: 500;">Privacy Policy</a>
+        <a href="terms.html" style="margin: 0 10px; color: var(--muted); text-decoration: none; font-weight: 500;">Terms</a>
+        <a href="disclaimer.html" style="margin: 0 10px; color: var(--muted); text-decoration: none; font-weight: 500;">Disclaimer</a>
     </div>
 
     <p>
@@ -50,9 +60,9 @@
     </p>
 </footer>
 
-<script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-</script>
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
     <script src="assets/js/main.js"></script>
 </body>
 </html>
