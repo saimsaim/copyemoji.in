@@ -33,14 +33,24 @@ const categoryIcons = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    if(localStorage.getItem('theme')==='dark') document.body.classList.add('dark');
+    // 🔥 UPDATE: Automatic System Theme Detection
+    const localTheme = localStorage.getItem('theme');
+    const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    // Logic: Agar purana saved hai to wo use karo, WARNA system ki setting dekho
+    if (localTheme === 'dark' || (!localTheme && systemDark)) {
+        document.body.classList.add('dark');
+    }
+
     if(themeToggle) {
         themeToggle.onclick = () => {
             document.body.classList.toggle('dark');
+            // Save user preference manually
             localStorage.setItem('theme', document.body.classList.contains('dark')?'dark':'light');
         };
     }
 
+    // 👇 Baaki code same hai, bas copy-paste kar lo
     const yearSpan = document.getElementById('year');
     if(yearSpan) yearSpan.textContent = new Date().getFullYear();
 

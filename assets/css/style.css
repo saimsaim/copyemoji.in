@@ -26,7 +26,6 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    /* outline: none;  <-- YE HATA DO */
 }
 
 /* Keyboard users ke liye focus ring */
@@ -229,3 +228,40 @@
       50% { opacity: 0.5; }
       100% { opacity: 1; }
   }
+
+/* =========================================
+   🚀 FEATURES PAGE STYLES (New Code Added Here)
+   ========================================= */
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+.feature-card {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.05);
+    transition: transform 0.2s, border-color 0.2s;
+    box-shadow: var(--shadow);
+}
+.feature-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary);
+}
+.feature-icon {
+    font-size: 32px;
+    margin-bottom: 10px;
+    display: block;
+}
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.status-live { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.status-coming { background: rgba(99, 102, 241, 0.1); color: #6366f1; }
