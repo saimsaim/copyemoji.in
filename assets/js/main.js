@@ -14,7 +14,9 @@ const contactForm = document.getElementById('contact-form');
 
 let allData = [];
 let allEmojis = [];
-let recentlyCopied = JSON.parse(localStorage.getItem('recentlyCopied')) || [];
+// Storage key for persistence
+const RECENT_STORAGE_KEY = 'recentlyCopied';
+let recentlyCopied = JSON.parse(localStorage.getItem(RECENT_STORAGE_KEY)) || [];
 let dockStack = [];
 let currentSkinTone = "";
 let currentRequestId; 
@@ -33,11 +35,10 @@ const categoryIcons = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 🔥 UPDATE: Automatic System Theme Detection
+    // 🌓 Automatic System Theme Detection
     const localTheme = localStorage.getItem('theme');
     const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-    // Logic: Agar purana saved hai to wo use karo, WARNA system ki setting dekho
     if (localTheme === 'dark' || (!localTheme && systemDark)) {
         document.body.classList.add('dark');
     }
@@ -45,22 +46,45 @@ document.addEventListener('DOMContentLoaded', () => {
     if(themeToggle) {
         themeToggle.onclick = () => {
             document.body.classList.toggle('dark');
-            // Save user preference manually
             localStorage.setItem('theme', document.body.classList.contains('dark')?'dark':'light');
         };
     }
 
-    // 👇 Baaki code same hai, bas copy-paste kar lo
+    // ⌨️ KEYBOARD SHORTCUTS
+    document.addEventListener('keydown', (e) => {
+        // 1. Press '/' to focus search
+        if (e.key === '/' && document.activeElement !== searchInput) {
+            e.preventDefault();
+            searchInput.focus();
+        }
+
+        // 2. Ctrl+C or Cmd+C to copy the stack (NO SPACE)
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c') {
+            if (dockStack.length > 0 && window.getSelection().toString() === "") {
+                e.preventDefault();
+                navigator.clipboard.writeText(dockStack.join('')); 
+                showToast('Stack Copied! 📋');
+            }
+        }
+
+        // 3. Press 'Esc' to clear search and dock
+        if (e.key === 'Escape') {
+            if (searchInput) {
+                searchInput.value = '';
+                renderEmojis(allEmojis);
+                searchInput.blur();
+            }
+            clearDock();
+        }
+    });
+
     const yearSpan = document.getElementById('year');
     if(yearSpan) yearSpan.textContent = new Date().getFullYear();
 
-    // 🔥 FIX: Remove delay. Load immediately for LCP.
     if(emojiGrid) loadEmojiData();
-    
     if(contactForm) initContactForm();
 
     window.addEventListener("load", () => {
-        // Defer non-critical toast even further
         setTimeout(greetUserSimple, 4000);
     });
 });
@@ -94,11 +118,9 @@ function loadEmojiData() {
     .then(data => {
         allData = data; 
         allEmojis = data.flatMap(cat => cat.emojis || []);
-        
-        // Critical Render Path
         renderCategoryButtons();
         renderEmojis(allEmojis);
-        renderRecent();
+        renderRecent(); 
     })
     .catch(err => console.error("JSON Error:", err));
 }
@@ -145,29 +167,21 @@ function renderEmojis(list) {
     }
     
     let index = 0;
-    
-    // 🔥 HYBRID STRATEGY
-    // Step 1: Render first 50 items SYNCHRONOUSLY (Fixes LCP Red Score)
     const initialChunkSize = 50; 
-    const subsequentChunkSize = isMobile ? 40 : 150; // Keeps TBT Low
+    const subsequentChunkSize = isMobile ? 40 : 150; 
 
-    // Render first chunk immediately
     const firstChunk = list.slice(0, initialChunkSize);
     appendChunk(firstChunk);
     index += initialChunkSize;
 
-    // Step 2: Render the rest with breathing room
     function loadNextChunk() {
         if (index >= list.length) return;
-        
         const chunk = list.slice(index, index + subsequentChunkSize);
         appendChunk(chunk);
-        
         index += subsequentChunkSize;
         currentRequestId = requestAnimationFrame(loadNextChunk);
     }
 
-    // Start background loading after a tiny delay to let LCP paint
     if (index < list.length) {
         setTimeout(() => {
             currentRequestId = requestAnimationFrame(loadNextChunk);
@@ -175,7 +189,6 @@ function renderEmojis(list) {
     }
 }
 
-// Helper to reduce code duplication
 function appendChunk(chunk) {
     const fragment = document.createDocumentFragment();
     chunk.forEach(item => {
@@ -199,7 +212,6 @@ function appendChunk(chunk) {
     emojiGrid.appendChild(fragment);
 }
 
-// Debounce Search Input
 let debounceTimer;
 if(searchInput) {
     searchInput.addEventListener('input', (e) => {
@@ -230,14 +242,18 @@ function isSkinToneSupported(emoji) {
 }
 
 function handleEmojiClick(char, element) {
+    // 1. Direct copy
     navigator.clipboard.writeText(char);
-    addRecent(char);
-    addToDock(char);
-    showToast(`Copied: ${char}`);
 
+    // 2. 🔥 FIX: Animation starts BEFORE re-rendering recent list
     if (element && dock && !isMobile) {
         runFlyingAnimation(char, element);
     }
+
+    // 3. Storage and UI update
+    addRecent(char); 
+    addToDock(char);
+    showToast(`Copied: ${char}`);
 }
 
 function runFlyingAnimation(char, element) {
@@ -283,8 +299,9 @@ function renderRecent() {
 }
 
 function addRecent(char) {
+    // 💾 Persist to localStorage
     recentlyCopied = [char, ...recentlyCopied.filter(x => x !== char)].slice(0, 10);
-    localStorage.setItem('recentlyCopied', JSON.stringify(recentlyCopied));
+    localStorage.setItem(RECENT_STORAGE_KEY, JSON.stringify(recentlyCopied));
     renderRecent();
 }
 
@@ -310,7 +327,8 @@ function clearDock() { dockStack = []; updateDockUI(); }
 
 if(dockCopyBtn) dockCopyBtn.onclick = () => { 
     if(dockStack.length) {
-        navigator.clipboard.writeText(dockStack.join(' '));
+        // 🔥 FIX: join('') to remove spaces
+        navigator.clipboard.writeText(dockStack.join('')); 
         showToast('Stack Copied!'); 
     }
 };
@@ -371,14 +389,10 @@ function initContactForm() {
     });
 }
 
-// =========================================
-// 🖱️ MOUSE TRAIL & 🃏 3D TILT EFFECT
-// =========================================
 if (!isMobile) {
     const trailEmojis = ['✨', '🔥', '🚀', '⭐', '⚡', '🌈'];
     let lastX = 0, lastY = 0;
     
-    // 1. Mouse Trail Logic
     document.addEventListener('mousemove', (e) => {
         const distance = Math.hypot(e.clientX - lastX, e.clientY - lastY);
         if (distance > 30) { 
@@ -398,28 +412,21 @@ if (!isMobile) {
         setTimeout(() => el.remove(), 800);
     }
 
-    // 2. 🃏 3D Tilt Logic (Restored)
     const grid = document.getElementById('emoji-grid');
     if (grid) {
         grid.addEventListener('mousemove', (e) => {
             const card = e.target.closest('.emoji-item');
             if (!card) return;
-
             const rect = card.getBoundingClientRect();
             const x = e.clientX - rect.left; 
             const y = e.clientY - rect.top;
-
             const centerX = rect.width / 2;
             const centerY = rect.height / 2;
-
-            // Tilt calculation (Max 15deg)
             const rotateX = ((y - centerY) / centerY) * -15; 
             const rotateY = ((x - centerX) / centerX) * 15;
-
             card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
         });
 
-        // Reset on mouse leave
         grid.addEventListener('mouseleave', (e) => {
             const card = e.target.closest('.emoji-item');
             if (card) {
