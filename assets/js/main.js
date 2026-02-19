@@ -159,34 +159,49 @@ function renderCategoryButtons() {
 function renderEmojis(list) {
     if (currentRequestId) cancelAnimationFrame(currentRequestId);
     if (!emojiGrid) return;
-    emojiGrid.innerHTML = '';
+
+    // 🔥 OLD CODE: emojiGrid.innerHTML = ''; (Yeh grid ko collapse karta tha)
     
+    // ✅ NEW FIX: Sirf tab clear karo jab naya content ready ho
+    // Pehle chunk ko prepare karo
+    const initialChunkSize = 50; 
+    const firstChunk = list.slice(0, initialChunkSize);
+    
+    // Agar list empty hai
     if(list.length === 0) {
-        emojiGrid.innerHTML = '<p style="text-align:center; width:100%; color:gray; margin-top:50px;">No emojis found 😕</p>';
+        emojiGrid.innerHTML = '<p style="text-align:center;width:100%;color:gray;margin-top:50px;">No emojis found 😕</p>';
         return;
     }
-    
-    let index = 0;
-    const initialChunkSize = 50; 
-    const subsequentChunkSize = isMobile ? 40 : 150; 
 
-    const firstChunk = list.slice(0, initialChunkSize);
+    // Pehla chunk render karne se pehle clear karo (Minimizes blank time)
+    emojiGrid.innerHTML = ''; 
     appendChunk(firstChunk);
-    index += initialChunkSize;
+
+    let index = initialChunkSize;
+    const subsequentChunkSize = isMobile ? 40 : 150; 
 
     function loadNextChunk() {
         if (index >= list.length) return;
-        const chunk = list.slice(index, index + subsequentChunkSize);
-        appendChunk(chunk);
-        index += subsequentChunkSize;
-        currentRequestId = requestAnimationFrame(loadNextChunk);
+        
+        // 🚀 Performance: Use RequestIdleCallback if available for background work
+        if (window.requestIdleCallback) {
+            requestIdleCallback(() => {
+                const chunk = list.slice(index, index + subsequentChunkSize);
+                appendChunk(chunk);
+                index += subsequentChunkSize;
+                loadNextChunk(); // Chain the next call
+            });
+        } else {
+            // Fallback for older browsers
+            const chunk = list.slice(index, index + subsequentChunkSize);
+            appendChunk(chunk);
+            index += subsequentChunkSize;
+            currentRequestId = requestAnimationFrame(loadNextChunk);
+        }
     }
 
-    if (index < list.length) {
-        setTimeout(() => {
-            currentRequestId = requestAnimationFrame(loadNextChunk);
-        }, 50);
-    }
+    // Thoda delay taaki main thread block na ho
+    setTimeout(loadNextChunk, 100);
 }
 
 function appendChunk(chunk) {
