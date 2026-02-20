@@ -164,7 +164,8 @@ body.dark .navbar {
     box-shadow: var(--shadow);
     color: var(--text);
     transition: 0.3s;
-    height: 100%; /* Fill container */
+    height: 100%;
+    /* Fill container */
 }
 
 #search-input:focus {
@@ -286,11 +287,11 @@ body.dark .navbar {
     transition: box-shadow 0.2s, border 0.2s, transform 0.1s ease-out;
     position: relative;
     overflow: hidden;
-    
+
     /* ✅ Layout Stability ke liye Height zaroori hai */
     height: 120px;
     width: 100%;
-    
+
     /* 🚀 LCP FAST Fix: Magic CSS removed for immediate rendering */
     transform-style: preserve-3d;
     will-change: transform;
@@ -366,9 +367,17 @@ body.dark .navbar {
 }
 
 @keyframes skeletonPulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
 }
 
 /* =========================================
@@ -527,8 +536,15 @@ body.dark .navbar {
     margin-bottom: 10px;
 }
 
-.status-live { background: rgba(16, 185, 129, 0.1); color: #10b981; }
-.status-coming { background: rgba(99, 102, 241, 0.1); color: #6366f1; }
+.status-live {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.status-coming {
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+}
 
 /* Kaomoji Grid */
 .kaomoji-items-grid {
@@ -615,7 +631,11 @@ body.dark .kaomoji-card {
 /* =========================================
    ✨ 8. ANIMATIONS & EFFECTS
    ========================================= */
-@keyframes pop { 50% { transform: scale(1.4); } }
+@keyframes pop {
+    50% {
+        transform: scale(1.4);
+    }
+}
 
 .floating-emoji {
     position: fixed;
@@ -627,9 +647,20 @@ body.dark .kaomoji-card {
 }
 
 @keyframes superPop {
-    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5) rotate(0deg); }
-    20% { opacity: 1; transform: translate(-50%, -50%) scale(2.5) rotate(-15deg); }
-    100% { opacity: 0; transform: translate(-50%, -150px) scale(1) rotate(45deg); }
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5) rotate(0deg);
+    }
+
+    20% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(2.5) rotate(-15deg);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -150px) scale(1) rotate(45deg);
+    }
 }
 
 .spiral-emoji {
@@ -652,8 +683,15 @@ body.dark .kaomoji-card {
 }
 
 @keyframes trailFade {
-    0% { opacity: 1; transform: translate(-50%, -50%) scale(1) translateY(0); }
-    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.2) translateY(-40px); }
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1) translateY(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.2) translateY(-40px);
+    }
 }
 
 /* =========================================
@@ -663,62 +701,81 @@ body.dark .kaomoji-card {
     .navbar {
         padding: 12px 3%;
     }
+
     .navbar h1 {
         font-size: 20px;
     }
+
     .controls {
         gap: 8px;
     }
+
     .skin-tone-selector {
         display: none;
     }
-    
+
     #emoji-grid {
         grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
         gap: 12px;
     }
-    
+
     .emoji-item {
         height: 100px;
         padding: 10px;
     }
+
     .emoji-char {
         font-size: 32px;
     }
-    
+
     .floating-dock {
         min-width: 90%;
         padding: 10px 16px;
     }
+
     .dock-content {
         max-width: 60%;
     }
-    
+
     /* Kaomoji Mobile */
     .kaomoji-items-grid {
         grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
         gap: 10px;
     }
+
     .kaomoji-card {
         min-height: 60px;
         padding: 8px !important;
     }
+
     #recently-used-list .kaomoji-card {
         height: 40px !important;
         min-height: 40px !important;
         padding: 0 12px !important;
     }
+
     #recently-used-list .kaomoji-card span {
         font-size: 0.9rem;
     }
 }
 
 /* Utility */
-.hidden { display: none !important; }
-.visually-hidden {
-    position: absolute; width: 1px; height: 1px; padding: 0;
-    margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+.hidden {
+    display: none !important;
 }
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 ::selection {
     background: rgba(99, 102, 241, 0.3);
     color: var(--text);
@@ -726,13 +783,19 @@ body.dark .kaomoji-card {
 
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
+
+    *,
+    *::before,
+    *::after {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
     }
-    .floating-emoji, .spiral-emoji, .trail-emoji {
+
+    .floating-emoji,
+    .spiral-emoji,
+    .trail-emoji {
         display: none !important;
     }
 }
@@ -771,7 +834,8 @@ body.dark .kaomoji-card {
 /* 📂 FILE: assets/css/style.css */
 
 /* 🔥 Naya ID add kiya comma laga ke 🔥 */
-#search-input, #kaomoji-search {
+#search-input,
+#kaomoji-search {
     width: 100%;
     padding: 18px 50px 18px 20px;
     font-size: 18px;
@@ -781,11 +845,13 @@ body.dark .kaomoji-card {
     box-shadow: var(--shadow);
     color: var(--text);
     transition: 0.3s;
-    height: 100%; /* Fill container */
+    height: 100%;
+    /* Fill container */
 }
 
 /* 🔥 Focus state me bhi naya ID add kiya 🔥 */
-#search-input:focus, #kaomoji-search:focus {
+#search-input:focus,
+#kaomoji-search:focus {
     border-color: var(--primary);
     box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
 }
@@ -868,27 +934,71 @@ body.dark .form-group textarea {
     opacity: 0.5;
     transition: opacity 0.2s;
 }
+
 .emoji-item:hover .info-btn {
     opacity: 1;
 }
 
- .category-link {
-            background: var(--card);
-            border: 1px solid rgba(0,0,0,0.1);
-            color: var(--text);
-            padding: 10px 20px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        .category-link:hover {
-            background: var(--primary);
-            color: #fff;
-            border-color: var(--primary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-        }
-        body.dark .category-link {
-            border-color: rgba(255,255,255,0.1);
-        }
+.category-link {
+    background: var(--card);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: var(--text);
+    padding: 10px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.category-link:hover {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+body.dark .category-link {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Alphabetical Sidebar (Emoji Categories) */
+.emoji-sidebar {
+    position: fixed;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 10px 5px;
+    border-radius: 20px;
+    z-index: 1000;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-icon {
+    font-size: 18px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.2s;
+    user-select: none;
+}
+
+.sidebar-icon:hover {
+    transform: scale(1.3);
+}
+
+/* Mobile pe Navbar/Dock se na takraye */
+@media (max-width: 768px) {
+    .emoji-sidebar {
+        padding: 5px 3px;
+        right: 2px;
+    }
+
+    .sidebar-icon {
+        font-size: 16px;
+    }
+}

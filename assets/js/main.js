@@ -120,7 +120,8 @@ function loadEmojiData() {
         allEmojis = data.flatMap(cat => cat.emojis || []);
         renderCategoryButtons();
         renderEmojis(allEmojis);
-        renderRecent(); 
+        renderRecent();
+        createEmojiSidebar(); 
     })
     .catch(err => console.error("JSON Error:", err));
 }
@@ -460,4 +461,37 @@ if (!isMobile) {
             }
         }, true);
     }
+}
+
+function createEmojiSidebar() {
+    // Purana sidebar delete karo agar hai toh
+    const oldSidebar = document.querySelector('.emoji-sidebar');
+    if (oldSidebar) oldSidebar.remove();
+
+    const sidebar = document.createElement('div');
+    sidebar.className = 'emoji-sidebar';
+
+    allData.forEach(cat => {
+        if (!cat.emojis || cat.emojis.length === 0) return;
+        
+        const icon = document.createElement('span');
+        icon.className = 'sidebar-icon';
+        icon.innerHTML = categoryIcons[cat.name] || "📂";
+        icon.title = cat.name;
+
+        icon.onclick = () => {
+            // Category sections ko search karega aur wahan scroll karega
+            const section = document.getElementById(`cat-${cat.name.replace(/\s+/g, '-')}`);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                // Agar sections nahi bane, toh filter trigger kar do (fallback)
+                renderEmojis(cat.emojis);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        };
+        sidebar.appendChild(icon);
+    });
+
+    document.body.appendChild(sidebar);
 }
