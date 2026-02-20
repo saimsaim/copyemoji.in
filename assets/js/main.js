@@ -212,16 +212,27 @@ function appendChunk(chunk) {
             char = char.replace(/\uFE0F/g, '') + currentSkinTone;
         }
 
+        // Slug banaya single page pe link karne ke liye
+        let slugRaw = item.slug ? item.slug.replace(/_/g, '-') : 'emoji';
+
         const div = document.createElement('div');
         div.className = 'emoji-item';
         div.title = item.name;
-        div.innerHTML = `<span class="emoji-char">${char}</span><button class="download-btn" aria-label="Download PNG">⬇ PNG</button>`;
+        
+        // ✨ NAYA LOGIC: 'i' button add kiya top-right me ✨
+        div.innerHTML = `
+            <a href="/emoji/${slugRaw}" class="info-btn" title="View Details" target="_blank" onclick="event.stopPropagation()">ℹ️</a>
+            <span class="emoji-char">${char}</span>
+            <button class="download-btn" aria-label="Download PNG">⬇ PNG</button>
+        `;
         
         div.onclick = () => handleEmojiClick(char, div);
+        
         div.querySelector('.download-btn').onclick = (e) => {
             e.stopPropagation();
             downloadEmoji(char, item.name);
         };
+        
         fragment.appendChild(div);
     });
     emojiGrid.appendChild(fragment);
