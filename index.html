@@ -58,7 +58,26 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>😊</text></svg>">
     
     <style>
-       
+        .category-link {
+            background: var(--card);
+            border: 1px solid rgba(0,0,0,0.1);
+            color: var(--text);
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .category-link:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+        body.dark .category-link {
+            border-color: rgba(255,255,255,0.1);
+        }
     </style>
 </head>
 <body>
@@ -70,6 +89,8 @@
     </div>
     
     <div class="controls">
+        <a href="/" class="kaomoji-nav-btn" aria-label="Go to Emojis">😀 Emojis</a>
+        
         <a href="kaomoji.html" class="kaomoji-nav-btn" aria-label="Go to Kaomoji">🎌 Kaomoji</a>
 
         <div class="skin-tone-selector">
