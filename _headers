@@ -1,0 +1,36 @@
+# ==========================================
+# CopyEmoji.in - Cloudflare Pages Headers
+# Best of Both Worlds 🚀
+# ==========================================
+
+# CSS, JS, Fonts - 1 saal cache (never changes, immutable)
+/assets/css/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/js/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Emoji + Category HTML pages - 1 din cache
+# (Cloudflare Pages deploy pe auto-purge hota hai)
+/emoji/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=3600
+
+/category/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=3600
+
+# Static pages - 7 din cache
+/about
+  Cache-Control: public, max-age=604800
+
+/privacy
+  Cache-Control: public, max-age=604800
+
+/terms
+  Cache-Control: public, max-age=604800
+
+/features
+  Cache-Control: public, max-age=604800
+
+# Homepage - 1 ghanta cache
+/
+  Cache-Control: public, max-age=3600, stale-while-revalidate=600
