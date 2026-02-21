@@ -495,3 +495,22 @@ function createEmojiSidebar() {
 
     document.body.appendChild(sidebar);
 }
+
+// ✅ Register Service Worker for PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(registration => {
+        console.log('Service Worker Registered! 🚀', registration.scope);
+      })
+      .catch(err => {
+        console.log('Service Worker Failed: ', err);
+      });
+  });
+}
+
+window.addEventListener('appinstalled', (evt) => {
+  // Custom install button ko hide kar do taaki baar-baar na dikhe
+  document.getElementById('myCustomInstallBtn').style.display = 'none';
+  console.log('Bhai ki App successfully install ho gayi! 🚀');
+});

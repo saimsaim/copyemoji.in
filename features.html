@@ -7,7 +7,11 @@
     <meta name="description" content="Check out the current features and upcoming roadmap for CopyEmoji.in. See why we are the fastest emoji tool.">
     <link rel="canonical" href="https://copyemoji.in/features">
     
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    
+    <link rel="stylesheet" href="/assets/css/style.css"> <script>(function(){var t=localStorage.getItem('theme'),s=window.matchMedia('(prefers-color-scheme: dark)').matches;if(t==='dark'||(!t&&s))document.documentElement.classList.add('dark-early');})();</script>
+    <style>html.dark-early body{background:#0f172a;color:#f8fafc;}</style>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,7 +30,7 @@
         </div>
         <div class="controls">
             <a href="/" class="kaomoji-nav-btn" aria-label="Go to Emojis">😀 Emojis</a>
-            <a href="kaomoji" class="kaomoji-nav-btn" aria-label="Go to Kaomoji">🎌 Kaomoji</a>
+            <a href="/kaomoji" class="kaomoji-nav-btn" aria-label="Go to Kaomoji">🎌 Kaomoji</a>
             
             <button id="theme-toggle" aria-label="Toggle Dark Mode">🌙</button>
         </div>
@@ -43,6 +47,13 @@
             <h3 style="border-bottom: 2px solid rgba(0,0,0,0.05); padding-bottom: 10px; margin-bottom: 20px;">✅ Available Now</h3>
             
             <div class="feature-grid">
+                <div class="feature-card" style="border: 2px solid var(--primary); background: rgba(99, 102, 241, 0.05);">
+                    <span class="status-badge status-live">NEW LIVE</span>
+                    <span class="feature-icon">📱</span>
+                    <h4 style="margin-bottom: 8px;">Mobile PWA App</h4>
+                    <p style="font-size: 14px; color: var(--muted);">Install CopyEmoji.in as a native-feel app on your smartphone for offline access.</p>
+                </div>
+
                 <div class="feature-card">
                     <span class="status-badge status-live">LIVE</span>
                     <span class="feature-icon">📖</span>
@@ -104,13 +115,6 @@
             
             <div class="feature-grid">
                 <div class="feature-card" style="border: 1px dashed var(--muted);">
-                    <span class="status-badge status-coming">IN PROGRESS</span>
-                    <span class="feature-icon">📱</span>
-                    <h4 style="margin-bottom: 8px;">Mobile PWA App</h4>
-                    <p style="font-size: 14px; color: var(--muted);">Install CopyEmoji.in as a native-feel app on your smartphone.</p>
-                </div>
-
-                <div class="feature-card" style="border: 1px dashed var(--muted);">
                     <span class="status-badge status-coming">PLANNED</span>
                     <span class="feature-icon">📂</span>
                     <h4 style="margin-bottom: 8px;">Emoji Collections</h4>
@@ -127,7 +131,7 @@
 
             <div style="text-align: center; margin-top: 40px;">
                 <p style="margin-bottom: 20px; color: var(--muted);">Have a feature request?</p>
-                <a href="contact" class="back-btn">Submit a Request 📩</a>
+                <a href="/contact" class="back-btn">Submit a Request 📩</a>
                 <br><br>
                 <a href="/" class="back-link">← Back to Home</a>
             </div>
@@ -152,6 +156,6 @@
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();
     </script>
-    <script src="assets/js/main.js"></script>
+    <script src="/assets/js/main.js" defer></script>
 </body>
 </html>
