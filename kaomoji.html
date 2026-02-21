@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Kaomoji Copy Tool (≧◡≦) - Cute Japanese Emoticons & Text Faces</title>
     <meta name="title" content="Kaomoji Copy Tool (≧◡≦) - Cute Japanese Emoticons & Text Faces">
-    <meta name="description" content="⚡ Copy & paste cute Japanese kaomojis, lenny faces, and text emoticons instantly! ¯\_(ツ)_/¯ Fast, clean, and ad-free tool with Smart Dock feature.">
-    <meta name="keywords" content="kaomoji, japanese emoticons, text faces, lenny face, cute text emojis, copy paste kaomoji, keyboard faces">
+    <meta name="description"
+        content="⚡ Copy & paste cute Japanese kaomojis, lenny faces, and text emoticons instantly! ¯\_(ツ)_/¯ Fast, clean, and ad-free tool with Smart Dock feature.">
+    <meta name="keywords"
+        content="kaomoji, japanese emoticons, text faces, lenny face, cute text emojis, copy paste kaomoji, keyboard faces">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://copyemoji.in/kaomoji.html">
 
@@ -20,7 +23,8 @@
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://copyemoji.in/kaomoji.html">
     <meta property="twitter:title" content="Kaomoji Copy Tool (≧◡≦) - Cute Text Faces">
-    <meta property="twitter:description" content="Copy & paste thousands of cute Japanese kaomojis instantly! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧">
+    <meta property="twitter:description"
+        content="Copy & paste thousands of cute Japanese kaomojis instantly! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧">
     <meta property="twitter:image" content="https://copyemoji.in/assets/images/preview-card.png">
 
     <script type="application/ld+json">
@@ -39,10 +43,11 @@
       }
     }
     </script>
-
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#6366f1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
+
     <link rel="preload" href="assets/data/kaomoji.json" as="fetch" crossorigin>
     <link rel="preload" href="assets/css/style.css" as="style">
     <link rel="preload" href="assets/js/kaomoji.js" as="script">
@@ -54,112 +59,122 @@
 
 <body class="kaomoji-page">
 
-<header class="navbar">
-    <div class="logo-area">
-        <a href="/" style="text-decoration: none; color: inherit;" aria-label="Go to homepage">
-            <h1>😊 CopyEmoji<span class="highlight">.in</span></h1>
-        </a>
-    </div>
+    <header class="navbar">
+        <div class="logo-area">
+            <a href="/" style="text-decoration: none; color: inherit;" aria-label="Go to homepage">
+                <h1>😊 CopyEmoji<span class="highlight">.in</span></h1>
+            </a>
+        </div>
 
-    <div class="controls">
-        <a href="/" class="kaomoji-nav-btn" aria-label="Go to Emojis">😀 Emojis</a>
+        <div class="controls">
+            <a href="/" class="kaomoji-nav-btn" aria-label="Go to Emojis">😀 Emojis</a>
 
-        <button id="theme-toggle" aria-label="Toggle Dark Mode" title="Toggle Dark Mode">🌙</button>
-    </div>
-</header>
+            <button id="theme-toggle" aria-label="Toggle Dark Mode" title="Toggle Dark Mode">🌙</button>
+        </div>
+    </header>
 
-<main class="main-wrapper">
+    <main class="main-wrapper">
 
-    <div class="search-container">
-        <label for="kaomoji-search" class="visually-hidden">Search kaomojis</label>
-        <input type="text"
-               id="kaomoji-search"
-               placeholder="Search kaomojis (Press '/' to focus)..."
-               aria-label="Search kaomojis"
-               autocomplete="off">
-        <span class="search-icon" aria-hidden="true">🔍</span>
-    </div>
+        <div class="search-container">
+            <label for="kaomoji-search" class="visually-hidden">Search kaomojis</label>
+            <input type="text" id="kaomoji-search" placeholder="Search kaomojis (Press '/' to focus)..."
+                aria-label="Search kaomojis" autocomplete="off">
+            <span class="search-icon" aria-hidden="true">🔍</span>
+        </div>
 
-    <div id="category-filters" class="category-filters" role="tablist" aria-label="Kaomoji categories"></div>
+        <div id="category-filters" class="category-filters" role="tablist" aria-label="Kaomoji categories"></div>
 
-    <div id="recently-used-container" class="recently-copied" role="region" aria-label="Recently used kaomojis">
-        <span class="label">🚀 Recent:</span>
-        <div id="recently-used-list" role="list">
-            <span class="placeholder-text">
-                Recently used kaomojis will appear here...
-            </span>
+        <div id="recently-used-container" class="recently-copied" role="region" aria-label="Recently used kaomojis">
+            <span class="label">🚀 Recent:</span>
+            <div id="recently-used-list" role="list">
+                <span class="placeholder-text">
+                    Recently used kaomojis will appear here...
+                </span>
+            </div>
+        </div>
+
+        <div id="kaomoji-grid" role="main" aria-label="Kaomoji collection"></div>
+
+        <section class="seo-content"
+            style="max-width: 1200px; margin: 40px auto 20px; padding: 0 20px; color: var(--text);">
+            <div class="content-box"
+                style="max-width: 100%; padding: 40px; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);">
+
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h2 style="color: var(--primary); font-size: 28px; margin-bottom: 10px;">Best Kaomoji & Text Faces
+                        Tool (づ｡◕‿‿◕｡)づ</h2>
+                    <p style="color: var(--muted);">Find the perfect Japanese emoticon for every mood!</p>
+                </div>
+
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; align-items: start;">
+
+                    <div>
+                        <h3
+                            style="font-size: 20px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                            🎌 What are Kaomojis?
+                        </h3>
+                        <p style="line-height: 1.6; color: var(--muted);">
+                            Kaomojis (顔文字) are popular Japanese text-based emoticons made from grammar punctuation and
+                            symbols. Unlike standard emojis, you don't need to tilt your head to read them! They are
+                            perfect for adding extra emotion to your texts, gaming bios, and social media posts.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h3
+                            style="font-size: 20px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                            ⚡ How to use?
+                        </h3>
+                        <p style="line-height: 1.6; color: var(--muted); margin-bottom: 15px;">
+                            <strong>Step 1:</strong> Type keywords like "happy" or "cry" in the search bar. <br>
+                            <strong>Step 2:</strong> Click any cute text face like <strong>(⌐■_■)</strong> to copy it.
+                            <br>
+                            <strong>Step 3:</strong> Paste it anywhere!
+                        </p>
+                        <p
+                            style="line-height: 1.6; color: var(--muted); background: var(--bg); padding: 15px; border-radius: 12px; font-size: 14px;">
+                            <strong>💡 Pro Tip:</strong> Click multiple Kaomojis to create a collection in the "Smart
+                            Dock" below, then copy them all at once!
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="clipboard-dock" class="floating-dock" role="region" aria-label="Clipboard dock">
+        <div class="dock-content" id="dock-preview" role="list" aria-label="Selected kaomojis"></div>
+        <div class="dock-actions">
+            <button id="dock-copy-btn" aria-label="Copy all selected kaomojis">Copy All</button>
+            <button id="dock-clear-btn" aria-label="Clear all selected kaomojis" title="Clear Stack">✖</button>
         </div>
     </div>
 
-    <div id="kaomoji-grid" role="main" aria-label="Kaomoji collection"></div>
+    <div id="toast" class="toast" role="status" aria-live="polite">Copied!</div>
 
-    <section class="seo-content" style="max-width: 1200px; margin: 40px auto 20px; padding: 0 20px; color: var(--text);">
-        <div class="content-box" style="max-width: 100%; padding: 40px; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);">
-            
-            <div style="text-align: center; margin-bottom: 30px;">
-                <h2 style="color: var(--primary); font-size: 28px; margin-bottom: 10px;">Best Kaomoji & Text Faces Tool (づ｡◕‿‿◕｡)づ</h2>
-                <p style="color: var(--muted);">Find the perfect Japanese emoticon for every mood!</p>
-            </div>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; align-items: start;">
-                
-                <div>
-                    <h3 style="font-size: 20px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
-                        🎌 What are Kaomojis?
-                    </h3>
-                    <p style="line-height: 1.6; color: var(--muted);">
-                        Kaomojis (顔文字) are popular Japanese text-based emoticons made from grammar punctuation and symbols. Unlike standard emojis, you don't need to tilt your head to read them! They are perfect for adding extra emotion to your texts, gaming bios, and social media posts.
-                    </p>
-                </div>
-
-                <div>
-                    <h3 style="font-size: 20px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
-                        ⚡ How to use?
-                    </h3>
-                    <p style="line-height: 1.6; color: var(--muted); margin-bottom: 15px;">
-                        <strong>Step 1:</strong> Type keywords like "happy" or "cry" in the search bar. <br>
-                        <strong>Step 2:</strong> Click any cute text face like <strong>(⌐■_■)</strong> to copy it. <br>
-                        <strong>Step 3:</strong> Paste it anywhere!
-                    </p>
-                    <p style="line-height: 1.6; color: var(--muted); background: var(--bg); padding: 15px; border-radius: 12px; font-size: 14px;">
-                        <strong>💡 Pro Tip:</strong> Click multiple Kaomojis to create a collection in the "Smart Dock" below, then copy them all at once!
-                    </p>
-                </div>
-
-            </div>
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="/features" class="footer-link">Features</a>
+            <a href="/about" class="footer-link">About Us</a>
+            <a href="/contact" class="footer-link">Contact Us</a>
+            <a href="/privacy" class="footer-link">Privacy Policy</a>
+            <a href="/terms" class="footer-link">Terms</a>
+            <a href="/disclaimer" class="footer-link">Disclaimer</a>
         </div>
-    </section>
+        <p>
+            &copy; <span id="year"></span> <strong>CopyEmoji.in</strong> • Crafted with ❤️ by <span
+                class="author-name">Saim Khalifa</span>
+        </p>
+    </footer>
 
-</main>
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
 
-<div id="clipboard-dock" class="floating-dock" role="region" aria-label="Clipboard dock">
-    <div class="dock-content" id="dock-preview" role="list" aria-label="Selected kaomojis"></div>
-    <div class="dock-actions">
-        <button id="dock-copy-btn" aria-label="Copy all selected kaomojis">Copy All</button>
-        <button id="dock-clear-btn" aria-label="Clear all selected kaomojis" title="Clear Stack">✖</button>
-    </div>
-</div>
-
-<div id="toast" class="toast" role="status" aria-live="polite">Copied!</div>
-
-<footer class="footer">
-    <div class="footer-links">
-        <a href="/features" class="footer-link">Features</a>     
-        <a href="/about" class="footer-link">About Us</a>
-        <a href="/contact" class="footer-link">Contact Us</a>
-        <a href="/privacy" class="footer-link">Privacy Policy</a>
-        <a href="/terms" class="footer-link">Terms</a>
-        <a href="/disclaimer" class="footer-link">Disclaimer</a>
-    </div>
-    <p>
-        &copy; <span id="year"></span> <strong>CopyEmoji.in</strong> • Crafted with ❤️ by <span class="author-name">Saim Khalifa</span>
-    </p>
-</footer>
-
-<script>
-document.getElementById('year').textContent = new Date().getFullYear();
-</script>
-
-<script src="assets/js/kaomoji.js"></script>
+    <script src="assets/js/kaomoji.js"></script>
 </body>
+
 </html>

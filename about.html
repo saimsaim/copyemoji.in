@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,19 +10,65 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap">
+
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#6366f1">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d2a2c950ecf64361bae9d4fa98017f71"}'></script><!-- End Cloudflare Web Analytics -->
+    <!-- Cloudflare Web Analytics -->
+    <script defer src='https://static.cloudflareinsights.com/beacon.min.js'
+        data-cf-beacon='{"token": "d2a2c950ecf64361bae9d4fa98017f71"}'></script><!-- End Cloudflare Web Analytics -->
     <style>
         /* Page Specific Styles */
-        .content-box { max-width: 800px; margin: 40px auto; background: var(--card); padding: 40px; border-radius: var(--radius); box-shadow: var(--shadow); }
-        h2 { color: var(--primary); margin-bottom: 20px; font-size: 32px; }
-        p { line-height: 1.6; margin-bottom: 15px; font-size: 18px; color: var(--muted); }
-        ul { margin-left: 20px; margin-bottom: 20px; }
-        li { margin-bottom: 10px; font-size: 18px; color: var(--text); }
-        .back-btn { display: inline-block; margin-top: 20px; padding: 10px 20px; background: var(--primary); color: white; text-decoration: none; border-radius: 50px; font-weight: bold; }
-        .back-btn:hover { background: var(--primary-hover); }
+        .content-box {
+            max-width: 800px;
+            margin: 40px auto;
+            background: var(--card);
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 32px;
+        }
+
+        p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-size: 18px;
+            color: var(--muted);
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: var(--text);
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+        }
+
+        .back-btn:hover {
+            background: var(--primary-hover);
+        }
     </style>
 </head>
+
 <body>
 
     <header class="navbar">
@@ -32,20 +79,22 @@
         </div>
 
         <div class="controls">
-        <a href="/" class="kaomoji-nav-btn" aria-label="Go to Emojis">😀 Emojis</a>
-        <a href="kaomoji.html" class="kaomoji-nav-btn" aria-label="Go to Kaomoji">🎌 Kaomoji</a>
-        
-        <button id="theme-toggle" aria-label="Toggle Dark Mode">🌙</button>
-    </div>
+            <a href="/" class="kaomoji-nav-btn" aria-label="Go to Emojis">😀 Emojis</a>
+            <a href="kaomoji.html" class="kaomoji-nav-btn" aria-label="Go to Kaomoji">🎌 Kaomoji</a>
+
+            <button id="theme-toggle" aria-label="Toggle Dark Mode">🌙</button>
+        </div>
     </header>
 
     <main class="main-wrapper">
         <div class="content-box">
             <h2>About CopyEmoji.in 🚀</h2>
-            <p>Welcome to <strong>CopyEmoji.in</strong>, the ultimate emoji tool designed specifically for developers, designers, and creators.</p>
-            
-            <p>Most emoji websites are slow, cluttered with ads, and lack productivity features. We decided to change that.</p>
-            
+            <p>Welcome to <strong>CopyEmoji.in</strong>, the ultimate emoji tool designed specifically for developers,
+                designers, and creators.</p>
+
+            <p>Most emoji websites are slow, cluttered with ads, and lack productivity features. We decided to change
+                that.</p>
+
             <h3>Why Use This Tool?</h3>
             <ul>
                 <li>⚡ <strong>Blazing Fast:</strong> Instant search without page reloads.</li>
@@ -57,29 +106,33 @@
 
             <h3>Meet the Developer 👨‍💻</h3>
             <p>
-                Hi, I'm <strong>Saim Khalifa</strong>, a passionate PHP Developer. I built this tool to make your workflow smoother and faster. If you have any feedback or feature requests, feel free to reach out!
+                Hi, I'm <strong>Saim Khalifa</strong>, a passionate PHP Developer. I built this tool to make your
+                workflow smoother and faster. If you have any feedback or feature requests, feel free to reach out!
             </p>
 
-<a href="/" class="back-btn" style="display: inline-block; margin-top: 20px;">← Back to Home</a>        </div>
+            <a href="/" class="back-btn" style="display: inline-block; margin-top: 20px;">← Back to Home</a>
+        </div>
     </main>
 
-   <footer class="footer">
-    <div class="footer-links">
-        <a href="/features" class="footer-link">Features</a>     
-        <a href="/about" class="footer-link">About Us</a>
-        <a href="/contact" class="footer-link">Contact Us</a>
-        <a href="/privacy" class="footer-link">Privacy Policy</a>
-        <a href="/terms" class="footer-link">Terms</a>
-        <a href="/disclaimer" class="footer-link">Disclaimer</a>
-    </div>
-    <p>
-        &copy; <span id="year"></span> <strong>CopyEmoji.in</strong> • Crafted with ❤️ by <span class="author-name">Saim Khalifa</span>
-    </p>
-</footer>
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="/features" class="footer-link">Features</a>
+            <a href="/about" class="footer-link">About Us</a>
+            <a href="/contact" class="footer-link">Contact Us</a>
+            <a href="/privacy" class="footer-link">Privacy Policy</a>
+            <a href="/terms" class="footer-link">Terms</a>
+            <a href="/disclaimer" class="footer-link">Disclaimer</a>
+        </div>
+        <p>
+            &copy; <span id="year"></span> <strong>CopyEmoji.in</strong> • Crafted with ❤️ by <span
+                class="author-name">Saim Khalifa</span>
+        </p>
+    </footer>
 
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();
     </script>
     <script src="assets/js/main.js"></script>
 </body>
+
 </html>
