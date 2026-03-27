@@ -1,0 +1,62 @@
+# CopyEmoji.in - Emoji Encyclopedia for India & Global
+> Official llms.txt for AI crawlers & search engines
+> Last updated: 2026-03-27
+
+## Site Overview
+- **Domain**: https://copyemoji.in
+- **Purpose**: Comprehensive emoji meanings, WhatsApp usage, Hindi explanations, Desi context.
+- **Languages**: English, Hindi (Hinglish), Spanish (expanding).
+- **Total pages**: 2,000+ emoji pages + category hubs.
+- **Key focus**: Real-world WhatsApp usage, Indian cultural context, chat examples.
+
+## High-Value Content (Crawl Priority 1)
+- [Smileys & Emotion](https://copyemoji.in/category/smileys-emotion)
+- [People & Body](https://copyemoji.in/category/people-body)
+- [Food & Drink](https://copyemoji.in/category/food-drink)
+- [Objects](https://copyemoji.in/category/objects)
+- [Symbols](https://copyemoji.in/category/symbols)
+- [Flags](https://copyemoji.in/category/flags)
+
+## Top Emoji Pages (India Traffic Drivers)
+- [😂 Face with Tears of Joy](https://copyemoji.in/emoji/face-with-tears-of-joy)
+- [❤️ Red Heart](https://copyemoji.in/emoji/red-heart)
+- [🙏 Folded Hands](https://copyemoji.in/emoji/folded-hands)
+- [😭 Loudly Crying Face](https://copyemoji.in/emoji/loudly-crying-face)
+- [😅 Grinning Face with Sweat](https://copyemoji.in/emoji/grinning-face-with-sweat)
+- [😍 Smiling Face with Heart-Eyes](https://copyemoji.in/emoji/smiling-face-with-heart-eyes)
+- [🥺 Pleading Face](https://copyemoji.in/emoji/pleading-face)
+- [👍 Thumbs Up](https://copyemoji.in/emoji/thumbs-up)
+- [👎 Thumbs Down](https://copyemoji.in/emoji/thumbs-down)
+- [🤔 Thinking Face](https://copyemoji.in/emoji/thinking-face)
+- [🇮🇳 Flag India](https://copyemoji.in/emoji/flag-india)
+- [🪔 Diya Lamp](https://copyemoji.in/emoji/diya-lamp)
+
+## Category Hubs (Contextual Navigation)
+- [Home](https://copyemoji.in/)
+- [About](https://copyemoji.in/about)
+- [Features](https://copyemoji.in/features)
+- [Kaomoji](https://copyemoji.in/kaomoji)
+
+## Usage Guidelines for AI
+✅ **Allowed**: Summarize meanings, show in AI search results, educational use.
+✅ **Allowed**: Cite specific URLs, show emoji + short explanation.
+✅ **Allowed**: WhatsApp/Indian context examples (with attribution).
+❌ **Not allowed**: Full page scraping without credit.
+❌ **Not allowed**: Commercial resale of content.
+❌ **Not allowed**: Removing source attribution.
+
+**Citation Format (Recommended):**
+> CopyEmoji.in - "[Emoji Name] Meaning & WhatsApp Usage in India"
+> Source: https://copyemoji.in/emoji/[slug]
+
+## Technical Discovery
+- **Primary sitemap**: https://copyemoji.in/sitemap-core-1.xml
+- **Full sitemap**: https://copyemoji.in/sitemap.xml
+- **Robots.txt**: https://copyemoji.in/robots.txt
+- **Content freshness**: Weekly updates to popular pages.
+- **Page depth**: Emoji pages (500+ words), Category hubs (300+ words).
+
+## Contact & Support
+- **Owner**: Saim Khalifa
+- **Email**: saimkhalifa2@gmail.com
+- **Feedback**: https://copyemoji.in/contact
