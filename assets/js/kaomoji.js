@@ -173,14 +173,9 @@ function renderGrid(obj) {
 }
 
 /* ================= CLICK ================= */
-
 function handleClick(char, element) {
-    // Copy to clipboard
-    navigator.clipboard.writeText(char).catch(err => {
-        console.error('Failed to copy:', err);
-        showToast('Failed to copy ❌');
-        return;
-    });
+    // 🔥 Apna naya safe copy function call karo
+    copyToClipboard(char);
 
     // Animation (desktop only)
     if (!isMobile && element) runFlyingAnimation(char, element);
@@ -275,12 +270,9 @@ function removeFromDock(i) {
 
 dockCopyBtn.onclick = () => {
     if (dockStack.length) {
-        navigator.clipboard.writeText(dockStack.join(' ')).then(() => {
-            showToast("Stack Copied! 📋");
-        }).catch(err => {
-            console.error('Failed to copy stack:', err);
-            showToast("Failed to copy ❌");
-        });
+        // 🔥 Naya safe copy function
+        copyToClipboard(dockStack.join(' '));
+        showToast("Stack Copied! 📋");
     }
 };
 
@@ -300,13 +292,13 @@ function initKeyboard() {
             searchInput.focus();
         }
 
-        // Copy dock on Ctrl+C / Cmd+C
+      // Copy dock on Ctrl+C / Cmd+C
         if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c') {
             if (dockStack.length && !window.getSelection().toString()) {
                 e.preventDefault();
-                navigator.clipboard.writeText(dockStack.join(' ')).then(() => {
-                    showToast("Stack Copied! 📋");
-                });
+                // 🔥 Naya safe copy function
+                copyToClipboard(dockStack.join(' '));
+                showToast("Stack Copied! 📋");
             }
         }
 
@@ -396,3 +388,31 @@ window.addEventListener('appinstalled', (evt) => {
   document.getElementById('myCustomInstallBtn').style.display = 'none';
   console.log('Bhai ki App successfully install ho gayi! 🚀');
 });
+
+/* ================= SAFE COPY FUNCTION ================= */
+function copyToClipboard(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+        // Live Server / HTTPS ke liye
+        navigator.clipboard.writeText(text).catch(err => {
+            console.error('Modern copy failed:', err);
+            showToast('Failed to copy ❌');
+        });
+    } else {
+        // Local double-click (file://) ke liye Fallback
+        let textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+            document.execCommand('copy');
+        } catch (err) {
+            console.error("Fallback copy failed", err);
+            showToast('Failed to copy ❌');
+        }
+        textArea.remove();
+    }
+}

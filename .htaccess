@@ -1,0 +1,6 @@
+RewriteEngine On
+RewriteBase /
+
+# Agar file ya folder real mein exist karta hai, toh usey hi dikhao
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d

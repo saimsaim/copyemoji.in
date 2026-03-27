@@ -58,15 +58,15 @@ document.addEventListener('DOMContentLoaded', () => {
             searchInput.focus();
         }
 
-        // 2. Ctrl+C or Cmd+C to copy the stack (NO SPACE)
+       
         if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c') {
             if (dockStack.length > 0 && window.getSelection().toString() === "") {
                 e.preventDefault();
-                navigator.clipboard.writeText(dockStack.join('')); 
+                // 🔥 FIX: yahan bhi apna function lagaya
+                copyToClipboard(dockStack.join('')); 
                 showToast('Stack Copied! 📋');
             }
         }
-
         // 3. Press 'Esc' to clear search and dock
         if (e.key === 'Escape') {
             if (searchInput) {
@@ -269,15 +269,12 @@ function isSkinToneSupported(emoji) {
 }
 
 function handleEmojiClick(char, element) {
-    // 1. Direct copy
-    navigator.clipboard.writeText(char);
+    copyToClipboard(char);
 
-    // 2. 🔥 FIX: Animation starts BEFORE re-rendering recent list
     if (element && dock && !isMobile) {
         runFlyingAnimation(char, element);
     }
 
-    // 3. Storage and UI update
     addRecent(char); 
     addToDock(char);
     showToast(`Copied: ${char}`);
@@ -354,8 +351,7 @@ function clearDock() { dockStack = []; updateDockUI(); }
 
 if(dockCopyBtn) dockCopyBtn.onclick = () => { 
     if(dockStack.length) {
-        // 🔥 FIX: join('') to remove spaces
-        navigator.clipboard.writeText(dockStack.join('')); 
+        copyToClipboard(dockStack.join('')); 
         showToast('Stack Copied!'); 
     }
 };
@@ -514,3 +510,35 @@ window.addEventListener('appinstalled', (evt) => {
   document.getElementById('myCustomInstallBtn').style.display = 'none';
   console.log('Bhai ki App successfully install ho gayi! 🚀');
 });
+
+// 🛠️ NAYA FUNCTION: Safe Copy Function (Local aur Live dono ke liye)
+function copyToClipboard(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+        // Live Server / HTTPS ke liye (Modern tarika)
+        navigator.clipboard.writeText(text).catch(err => {
+            console.error("Modern copy failed: ", err);
+        });
+    } else {
+        // Local double-click (file://) ke liye (Jugaad tarika)
+        let textArea = document.createElement("textarea");
+        textArea.value = text;
+        
+        // Textbox ko screen se chupane ke liye
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        
+        textArea.focus();
+        textArea.select();
+        
+        try {
+            document.execCommand('copy');
+        } catch (err) {
+            console.error("Fallback copy failed", err);
+        }
+        
+        // Kachra saaf
+        textArea.remove();
+    }
+}

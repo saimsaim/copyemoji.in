@@ -1,36 +1,54 @@
 # ==========================================
-# CopyEmoji.in - Cloudflare Pages Headers
-# Best of Both Worlds 🚀
+# CopyEmoji.in - Optimized Headers (SEO + Speed)
 # ==========================================
 
-# CSS, JS, Fonts - 1 saal cache (never changes, immutable)
-/assets/css/*
+# -------------------------------
+# 🔹 Assets (CSS, JS, Fonts)
+# -------------------------------
+/assets/*
   Cache-Control: public, max-age=31536000, immutable
 
-/assets/js/*
-  Cache-Control: public, max-age=31536000, immutable
-
-# Emoji + Category HTML pages - 1 din cache
-# (Cloudflare Pages deploy pe auto-purge hota hai)
+# -------------------------------
+# 🔹 Emoji + Category Pages
+# -------------------------------
 /emoji/*
   Cache-Control: public, max-age=86400, stale-while-revalidate=3600
+  X-Robots-Tag: index, follow
 
 /category/*
   Cache-Control: public, max-age=86400, stale-while-revalidate=3600
+  X-Robots-Tag: index, follow
 
-# Static pages - 7 din cache
+# -------------------------------
+# 🔹 Static Pages
+# -------------------------------
 /about
   Cache-Control: public, max-age=604800
+  X-Robots-Tag: index, follow
 
 /privacy
   Cache-Control: public, max-age=604800
+  X-Robots-Tag: index, follow
 
 /terms
   Cache-Control: public, max-age=604800
+  X-Robots-Tag: index, follow
 
 /features
   Cache-Control: public, max-age=604800
+  X-Robots-Tag: index, follow
 
-# Homepage - 1 ghanta cache
+# -------------------------------
+# 🔹 Homepage
+# -------------------------------
 /
   Cache-Control: public, max-age=3600, stale-while-revalidate=600
+  X-Robots-Tag: index, follow
+
+# -------------------------------
+# 🔹 Security Headers (Bonus 🔥)
+# -------------------------------
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
