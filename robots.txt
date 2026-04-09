@@ -3,6 +3,3 @@ Allow: /
 Disallow: /assets/
 
 Sitemap: https://copyemoji.in/sitemap.xml
-
-# LLMs & AI Crawlers
-LLMs: https://copyemoji.in/llms.txt
