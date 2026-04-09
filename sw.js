@@ -1,3 +1,12 @@
+// 1. Monetag Config (Sabse Pehle)
+self.options = {
+    "domain": "3nbf4.com",
+    "zoneId": 10852209
+}
+self.lary = ""
+importScripts('https://3nbf4.com/act/files/service-worker.min.js?r=sw')
+
+// 2. Tera Purana Caching Logic
 const CACHE_NAME = 'copyemoji-cache-v1';
 const urlsToCache = [
   '/',
@@ -6,7 +15,7 @@ const urlsToCache = [
   '/assets/data/emoji.json'
 ];
 
-// 🛠️ Install Service Worker
+// Install Service Worker
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -16,12 +25,11 @@ self.addEventListener('install', event => {
   );
 });
 
-// ⚡ Fetch and Cache (Offline Support)
+// Fetch and Cache (Offline Support)
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
       .then(response => {
-        // Agar cache mein hai toh turant do, warna net se load karo
         return response || fetch(event.request);
       })
   );
