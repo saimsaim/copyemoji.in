@@ -1,25 +1,16 @@
-# wrangler files
-.wrangler
-.dev.vars*
-!.dev.vars.example
-.env*
-!.env.example
-composer.json
-composer.lock
-index-now.php
-progress.txt
+# Dependency directories
+/vendor/
+
+# Firebase/Google Keys (SECURITY RISK!)
 service-account.json
-vendor/autoload.php
-vendor/composer/autoload_classmap.php
-vendor/composer/autoload_files.php
-vendor/composer/autoload_namespaces.php
-vendor/composer/autoload_psr4.php
-vendor/composer/autoload_real.php
-vendor/composer/autoload_static.php
-vendor/composer/ClassLoader.php
-vendor/composer/installed.json
-vendor/composer/installed.php
-vendor/composer/InstalledVersions.php
-vendor/composer/LICENSE
-vendor/composer/platform_check.php
+
+# Local scripts & logs
+index-now.php
 bing-index-now.php
+progress.txt
+progress_bing.txt
+
+# Cloudflare/Wrangler
+.wrangler/
+.dev.vars*
+.env*
