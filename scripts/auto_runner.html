@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CopyEmoji — Live Ollama Monitor</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: monospace; background: #0f172a; color: #e2e8f0; padding: 20px; }
+h1 { color: #6366f1; margin-bottom: 6px; font-size: 20px; }
+.subtitle { color: #64748b; font-size: 13px; margin-bottom: 20px; }
+
+.stats-bar {
+    display: flex; gap: 16px; flex-wrap: wrap;
+    background: #1e293b; border-radius: 10px;
+    padding: 16px; margin-bottom: 20px;
+}
+.stat { text-align: center; }
+.stat-val { font-size: 28px; font-weight: bold; color: #6366f1; }
+.stat-val.done  { color: #22c55e; }
+.stat-val.pend  { color: #f59e0b; }
+.stat-val.err   { color: #ef4444; }
+.stat-label { font-size: 11px; color: #64748b; margin-top: 2px; }
+
+.progress-wrap { background: #1e293b; border-radius: 10px; padding: 16px; margin-bottom: 20px; }
+.bar-outer { background: #334155; border-radius: 999px; height: 18px; overflow: hidden; }
+.bar-inner { height: 100%; border-radius: 999px; background: linear-gradient(90deg,#6366f1,#22c55e); transition: width 0.5s; }
+.bar-label { text-align: right; font-size: 12px; color: #94a3b8; margin-top: 6px; }
+
+.controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+button {
+    padding: 10px 20px; border: none; border-radius: 8px;
+    font-family: monospace; font-size: 14px; cursor: pointer; font-weight: bold;
+}
+#btn-start  { background: #6366f1; color: white; }
+#btn-stop   { background: #ef4444; color: white; }
+#btn-phase2 { background: #22c55e; color: #0f172a; }
+#btn-phase2:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
+
+.status-line {
+    background: #1e293b; border-radius: 8px;
+    padding: 12px 16px; margin-bottom: 20px;
+    font-size: 14px; color: #e2e8f0;
+    display: flex; align-items: center; gap: 10px;
+    border-left: 4px solid #334155;
+}
+.dot { width: 10px; height: 10px; border-radius: 50%; background: #334155; flex-shrink: 0; }
+.dot.running { background: #6366f1; animation: pulse 1s infinite; }
+.dot.done    { background: #22c55e; }
+
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+.log-box {
+    background: #1e293b; border-radius: 10px;
+    padding: 14px; height: 300px; overflow-y: auto;
+    font-size: 12px; line-height: 1.8;
+}
+.log-box .ok { color: #22c55e; }
+.log-box .wait { color: #f59e0b; }
+.log-box .info { color: #6366f1; }
+</style>
+</head>
+<body>
+
+<h1>🚀 CopyEmoji — Live Dashboard</h1>
+<p class="subtitle">Back-end worker ka status yahan live dikhega</p>
+
+<div class="stats-bar">
+    <div class="stat"><div class="stat-val" id="s-total">—</div><div class="stat-label">Total</div></div>
+    <div class="stat"><div class="stat-val done" id="s-done">—</div><div class="stat-label">Generated</div></div>
+    <div class="stat"><div class="stat-val pend" id="s-pend">—</div><div class="stat-label">Pending</div></div>
+    <div class="stat"><div class="stat-val err"  id="s-err">—</div><div class="stat-label">Errors</div></div>
+    <div class="stat"><div class="stat-val done" id="s-pct">0%</div><div class="stat-label">Complete</div></div>
+</div>
+
+<div class="progress-wrap">
+    <div class="bar-outer"><div class="bar-inner" id="prog-bar" style="width:0%"></div></div>
+    <div class="bar-label" id="prog-label">0 / 0</div>
+</div>
+
+<div class="status-line" id="status-container">
+    <div class="dot" id="status-dot"></div>
+    <span id="status-text">Checking worker status...</span>
+</div>
+
+<div class="controls">
+    <button id="btn-start" onclick="startRunner()">▶ Trigger Phase 1</button>
+    <button id="btn-stop" onclick="stopRunner()">⏹ Stop Tracking</button>
+    <button id="btn-phase2" onclick="runPhase2()" disabled>🌐 Run Phase 2 (HTML Generate)</button>
+</div>
+
+<div class="log-box" id="log"></div>
+
+<script>
+let running = false;
+const STATS_URL  = '/copyemoji.in/scripts/auto_runner_stats.php';
+const PHASE1_URL = '/copyemoji.in/scripts/phase1_generate.php';
+const PHASE2_URL = '/copyemoji.in/scripts/phase2_render.php';
+
+// 1. Page Load pe check karo
+window.onload = () => {
+    if (localStorage.getItem('is_running') === 'true') {
+        running = true;
+        document.getElementById('status-dot').className = 'dot running';
+        log('Session restored. Tracking active.', 'info');
+    }
+    pollData();
+};
+
+function log(msg, type = 'info') {
+    const box = document.getElementById('log');
+    const line = document.createElement('div');
+    line.className = type;
+    line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+    box.appendChild(line);
+    box.scrollTop = box.scrollHeight;
+}
+
+async function pollData() {
+    try {
+        const r = await fetch(STATS_URL + '?t=' + Date.now());
+        const data = await r.json();
+        
+        // Stats update
+        document.getElementById('s-total').textContent = data.total;
+        document.getElementById('s-done').textContent  = data.generated;
+        document.getElementById('s-pend').textContent  = data.pending;
+        document.getElementById('s-err').textContent   = data.errors;
+        document.getElementById('s-pct').textContent   = data.pct_done + '%';
+        
+        document.getElementById('prog-bar').style.width = data.pct_done + '%';
+        document.getElementById('prog-label').textContent = `${data.generated} / ${data.total}`;
+
+        // Live Status logic
+        const dot = document.getElementById('status-dot');
+        const txt = document.getElementById('status-text');
+        
+        if (data.current_slug) {
+            txt.innerHTML = `Worker is writing: <strong style="color:#6366f1;">${data.current_slug}</strong> ✍️`;
+            dot.className = 'dot running';
+            document.getElementById('status-container').style.borderLeftColor = '#6366f1';
+        } else if (data.pending == 0) {
+            txt.textContent = '✅ All Emojis Generated! Run Phase 2.';
+            dot.className = 'dot done';
+            document.getElementById('btn-phase2').disabled = false;
+        } else {
+            txt.textContent = 'Worker is resting or terminal is closed.';
+            dot.className = 'dot';
+            document.getElementById('status-container').style.borderLeftColor = '#334155';
+        }
+
+    } catch (e) {
+        log('Stats fetch error.', 'err');
+    }
+    setTimeout(pollData, 3000); // Har 3 sec mein check
+}
+
+async function startRunner() {
+    running = true;
+    localStorage.setItem('is_running', 'true');
+    log('Triggering backend batch...', 'info');
+    
+    // Sirf trigger karo, worker background mein khud sambhal lega
+    fetch(PHASE1_URL).then(r => r.text()).then(t => {
+        log('Batch request sent to server.', 'ok');
+    });
+}
+
+function stopRunner() {
+    running = false;
+    localStorage.setItem('is_running', 'false');
+    log('Manual tracking stopped.', 'err');
+}
+
+async function runPhase2() {
+    log('Starting Phase 2: HTML Generation...', 'info');
+    try {
+        await fetch(PHASE2_URL);
+        log('Phase 2 Complete! All files updated.', 'ok');
+    } catch (e) {
+        log('Phase 2 Error.', 'err');
+    }
+}
+</script>
+</body>
+</html>
