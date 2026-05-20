@@ -113,7 +113,7 @@ function greetUserSimple() {
 }
 
 function loadEmojiData() {
-    fetch('assets/data/emoji.json')
+    fetch('assets/data/emoji.json?v=' + Date.now()) 
     .then(r => r.json())
     .then(data => {
         allData = data; 
