@@ -364,7 +364,7 @@ foreach ($data as $catKey => $catObj) {
     </main>
     <div id='toast' class='toast'>Copied!</div>
     $footerHtml
-    <script src='/assets/js/main.js?v=1.3' defer></script>
+    <script src='/assets/js/main.js?v=1.4' defer></script>
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();
         function copyEmojiMain(char) {
@@ -434,7 +434,7 @@ foreach ($data as $catKey => $catObj) {
     </main>
     <div id='toast' class='toast'>Copied!</div>
     $footerHtml
-    <script src='/assets/js/main.js?v=1.3' defer></script>
+    <script src='/assets/js/main.js?v=1.4' defer></script>
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();
         function copyEmojiMain(char) {
