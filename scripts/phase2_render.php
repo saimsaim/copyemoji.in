@@ -1,7 +1,7 @@
 <?php
 /**
  * ============================================================
- * CopyEmoji.in — PHASE 2: FINAL RENDER (Safe Sitemap + Original UI) 🚀
+ * CopyEmoji.in — PHASE 2: FINAL RENDER (DB-Driven + SEO Optimized) 🚀
  * ============================================================
  */
 
@@ -27,31 +27,49 @@ try {
 
 // ─── PATHS ─────────────────────────────────────────────────
 $basePath    = realpath(__DIR__ . '/..');
-$jsonPath    = $basePath . '/assets/data/emoji.json';
 $emojiDir    = $basePath . '/emoji';
 $categoryDir = $basePath . '/category';
 $sitemapPath = $basePath . '/sitemap.xml';
 
-if (!file_exists($jsonPath)) die("emoji.json nahi mila!");
-$data = json_decode(file_get_contents($jsonPath), true);
-if (!is_array($data)) die("Invalid JSON!");
-
 if (!file_exists($emojiDir))    mkdir($emojiDir,    0777, true);
 if (!file_exists($categoryDir)) mkdir($categoryDir, 0777, true);
 
-// ─── DB CONTENT LOADER ────────────────────────────────────
+// ─── DB SE LIVE DATA STRUCTURE BANAAO (No Json File Needed!) ───
+echo "⏳ Database se live data fetch ho raha hai...<br>";
+$allEmojis = $pdo->query("SELECT * FROM emoji_content ORDER BY category ASC, id ASC")->fetchAll();
+
+$data = [];
 $dbContent = [];
-$rows = $pdo->query("
-    SELECT slug, description, faq_json
-    FROM emoji_content
-    WHERE status = 'generated' AND description IS NOT NULL
-")->fetchAll();
-foreach ($rows as $row) {
-    $dbContent[$row['slug']] = $row;
+
+foreach ($allEmojis as $row) {
+    $catName = $row['category'];
+    // Category slug auto-generate karo website style mein
+    $catSlug = str_replace(' ', '-', strtolower(str_replace(' & ', ' and ', $catName)));
+    
+    if (!isset($data[$catSlug])) {
+        $data[$catSlug] = [
+            'name' => $catName,
+            'slug' => $catSlug,
+            'emojis' => []
+        ];
+    }
+    
+    // Grid structure ke liye data bharo
+    $data[$catSlug]['emojis'][] = [
+        'emoji' => $row['emoji_char'],
+        'slug' => $row['slug'],
+        'unicode_version' => $row['unicode_ver'],
+        'emoji_version' => $row['emoji_ver']
+    ];
+
+    // Caching for single page generator
+    if ($row['status'] === 'generated' && !empty($row['description'])) {
+        $dbContent[$row['slug']] = $row;
+    }
 }
 
 $totalInDb = count($dbContent);
-echo "DB mein generated descriptions: <strong>$totalInDb</strong><br>";
+echo "DB mein total active generated descriptions: <strong>$totalInDb</strong><br>";
 
 // ─── SMART SITEMAP EXTRACTOR (Kaomoji Saver) 🛡️ ───────────
 $sitemapData = [];
@@ -61,11 +79,10 @@ if (file_exists($sitemapPath)) {
         foreach ($existingXml->url as $node) {
             $loc = (string)$node->loc;
             
-            // Check if URL is strictly an emoji or emoji-category page
             $isEmojiPage = preg_match('#^https?://[^/]+/emoji/#', $loc);
             $isCategoryPage = preg_match('#^https?://[^/]+/category/#', $loc);
             
-            // Agar emoji ya category page NAHI hai, toh usko preserve karo (Kaomoji, About, etc. safe rahenge)
+            // Agar emoji/category page NAHI hai, toh preserve karo (Kaomoji, About, etc. safe rahenge)
             if (!$isEmojiPage && !$isCategoryPage) {
                 $sitemapData[] = [
                     "url"      => $loc,
@@ -78,7 +95,6 @@ if (file_exists($sitemapPath)) {
     }
 }
 
-// Agar in case sitemap khali ho, toh default static pages daal do
 if (empty($sitemapData)) {
     $sitemapData = [
         ["url" => "https://copyemoji.in/",          "lastmod" => date('Y-m-d'), "freq" => "daily",   "priority" => "1.0"],
@@ -107,7 +123,7 @@ function getHtmlEntity(string $emojiStr): string {
     $chars = mb_str_split($emojiStr, 1, 'UTF-8');
     $entities = [];
     foreach ($chars as $char) {
-        $entities[] = "&amp;#" . mb_ord($char, 'UTF-8') . ";";
+        $entities[] = "&#" . mb_ord($char, 'UTF-8') . ";";
     }
     return implode(" ", $entities);
 }
@@ -213,22 +229,25 @@ $htmlCount = 0;
 $catCount  = 0;
 
 // ─── MAIN LOOP ─────────────────────────────────────────────
-foreach ($data as $catObj) {
+foreach ($data as $catKey => $catObj) {
     $categoryName = $catObj['name']  ?? 'General';
-    $categorySlug = str_replace('_', '-', $catObj['slug'] ?? 'general');
+    $categorySlug = $catObj['slug'] ?? 'general';
     $emojisList   = $catObj['emojis'] ?? [];
     $categoryGridHtml = '';
 
     foreach ($emojisList as $e) {
         $emojiChar  = $e['emoji'] ?? '';
-        $slugRaw    = str_replace('_', '-', $e['slug'] ?? '');
+        $slugRaw    = $e['slug'] ?? '';
         $name       = ucwords(str_replace('-', ' ', $slugRaw));
         $unicode    = $e['unicode_version'] ?? '1.0';
         $version    = $e['emoji_version']   ?? '1.0';
-        $shortcode  = ":" . ($e['slug'] ?? '') . ":";
+        
+        $shortcode  = ":" . str_replace('-', '_', $slugRaw) . ":";
 
         $emojiCodepoints = getEmojiCodepoints($emojiChar);
+        // FIX: &amp; hٹا kar direct & use kar rahe hain taaki issue na aaye
         $htmlEntity      = getHtmlEntity($emojiChar);
+        
         $keywordWords    = array_merge(
             explode(" ", strtolower($name)),
             [strtolower(str_replace(" & ", ", ", $categoryName)), "emoji"]
@@ -241,7 +260,7 @@ foreach ($data as $catObj) {
         $faqJsonLd       = getFaqSchema($slugRaw, $dbContent, $name, $emojiChar, $htmlEntity);
         $metaDesc        = "Copy the $name emoji ($emojiChar). Meaning, HTML Entity ($htmlEntity), Codepoints ($emojiCodepoints), Keywords: $autoKeywords.";
 
-        // 🔥 YAHAN LAGA HAI ORIGINAL COPY BUTTON WALA LOGIC 🔥
+        // Category grid HTML logic
         $categoryGridHtml .= "
         <div class='emoji-item' onclick='copyEmojiMain(\"$emojiChar\")' title='Copy $name' style='cursor:pointer; position:relative;'>
             <a href='/emoji/$slugRaw' class='info-btn' title='View Details' target='_blank' onclick='event.stopPropagation()' style='position:absolute; top:5px; right:5px; text-decoration:none; font-size:14px; opacity:0.6; transition:opacity 0.2s;'>ℹ️</a>
@@ -249,14 +268,14 @@ foreach ($data as $catObj) {
             <button class='download-btn' style='pointer-events:none; background:rgba(99,102,241,0.1); color:#4338ca; border:1px solid rgba(99,102,241,0.2); border-radius:8px; padding:6px 0; width:100%; font-size:12px; font-weight:700;'>Copy</button>
         </div>";
 
-        // Related emojis for single pages
+        // Related emojis logic
         $relatedHtml = '';
         if (count($emojisList) > 1) {
             $relatedKeys = array_rand($emojisList, min(12, count($emojisList)));
             foreach ((array)$relatedKeys as $rk) {
-                if ($emojisList[$rk]['slug'] === $e['slug']) continue;
+                if ($emojisList[$rk]['slug'] === $slugRaw) continue;
                 $relChar = $emojisList[$rk]['emoji'];
-                $relSlug = str_replace('_', '-', $emojisList[$rk]['slug']);
+                $relSlug = $emojisList[$rk]['slug'];
                 $relatedHtml .= "
                 <a href='/emoji/$relSlug' class='emoji-item' style='text-decoration:none;'>
                     <div class='emoji-char'>$relChar</div>
@@ -278,6 +297,10 @@ foreach ($data as $catObj) {
     <link rel='manifest' href='/manifest.json'>
     <meta name='theme-color' content='#6366f1'>
     <link rel='canonical' href='https://copyemoji.in/emoji/$slugRaw'>
+    <meta property='og:title' content='$name Emoji $emojiChar - Meaning & Copy'>
+    <meta property='og:description' content='$metaDesc'>
+    <meta property='og:url' content='https://copyemoji.in/emoji/$slugRaw'>
+    <meta property='og:type' content='website'>
     <link rel='stylesheet' href='/assets/css/style.css'>
     <script>(function(){var t=localStorage.getItem('theme'),s=window.matchMedia('(prefers-color-scheme: dark)').matches;if(t==='dark'||(!t&&s))document.documentElement.classList.add('dark-early');})();</script>
     <style>html.dark-early body{background:#0f172a;color:#f8fafc;}</style>
@@ -373,7 +396,7 @@ foreach ($data as $catObj) {
         $htmlCount++;
     }
 
-    // 🔥 CATEGORY PAGE MEIN BHI SAARI SCRIPTS AUR TOAST WAPAS LA DIYA 🔥
+    // ── CATEGORY PAGE RENDER ──
     $catMetaDesc = "Browse and copy all $categoryName emojis instantly. Discover meanings, Unicode info, and download PNGs for emojis in the $categoryName category.";
     $catPageHtml = "<!DOCTYPE html>
 <html lang='en'>
@@ -442,9 +465,8 @@ $xml .= '</urlset>';
 file_put_contents($sitemapPath, $xml);
 
 // ─── REPORTING ───────────────────────────────────────────
-echo "<h2>✅ Poori Site Render Ho Gayi Bhai (With Original UI)!</h2>";
+echo "<h2>✅ Poori Site Render Ho Gayi Bhai (Dynamic Database Mode + SEO Tags)!</h2>";
 echo "<p>HTML files updated: <strong>$htmlCount</strong></p>";
 echo "<p>Category pages updated: <strong>$catCount</strong></p>";
-echo "<p style='color:green;'><strong>Category UI & Sitemap restored successfully!</strong></p>";
-echo "<p>👉 Ab tu bindaas Cloudflare pe push kar sakta hai!</p>";
+echo "<p style='color:green;'><strong>JSON bypass complete. Control is now fully with DB!</strong></p>";
 ?>
