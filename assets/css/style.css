@@ -14,12 +14,28 @@
     --font-stack: 'Outfit', "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
 }
 
+/* Dark theme — `dark` is set on <html> by the head pre-paint snippet and on
+   <body> by the toggle; main.js/kaomoji.js always keep both in sync. */
+html.dark,
 body.dark {
     --bg: #0f172a;
     --card: #1e293b;
     --text: #f8fafc;
     --muted: #94a3b8;
     --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Strict Light default — OS dark theme must NEVER auto-darken the page.
+   Dark applies ONLY on explicit toggle (localStorage.theme === 'dark'). */
+html {
+    color-scheme: light;
+    background: #f8f9fa;
+}
+
+html.dark,
+body.dark {
+    color-scheme: dark;
+    background: #0f172a;
 }
 
 * {
@@ -66,6 +82,7 @@ body {
     box-sizing: border-box;
 }
 
+html.dark .navbar,
 body.dark .navbar {
     background: rgba(15, 23, 42, 0.8);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -576,6 +593,7 @@ body.dark .navbar {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
+html.dark .kaomoji-card,
 body.dark .kaomoji-card {
     background: var(--card);
     border-color: rgba(255, 255, 255, 0.08);
@@ -863,6 +881,8 @@ body.dark .kaomoji-card {
     transition: all 0.3s ease;
 }
 
+html.dark .form-group input,
+html.dark .form-group textarea,
 body.dark .form-group input,
 body.dark .form-group textarea {
     border-color: rgba(255, 255, 255, 0.1);
@@ -937,6 +957,7 @@ body.dark .form-group textarea {
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }
 
+html.dark .category-link,
 body.dark .category-link {
     border-color: rgba(255, 255, 255, 0.1);
 }

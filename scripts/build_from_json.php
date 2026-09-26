@@ -496,8 +496,7 @@ foreach ($all as $i => $e) {
     <meta name='twitter:description' content='$safeDesc'>
     <meta name='twitter:image' content='" . SITE_URL . "/assets/images/preview-card.png'>
     <link rel='stylesheet' href='/assets/css/style.css'>
-    <script>(function(){var t=localStorage.getItem('theme'),s=window.matchMedia('(prefers-color-scheme: dark)').matches;if(t==='dark'||(!t&&s))document.documentElement.classList.add('dark-early');})();</script>
-    <style>html.dark-early body{background:#0f172a;color:#f8fafc;}</style>
+    <script>(function(){try{if(localStorage.getItem('theme')==='dark'){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
     <link rel='preconnect' href='https://fonts.googleapis.com'>
     <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
     <link rel='preload' as='style' href='https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap' onload=\"this.onload=null;this.rel='stylesheet'\">

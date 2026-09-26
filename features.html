@@ -18,13 +18,7 @@
     <meta name="theme-color" content="#6366f1">
 
     <link rel="stylesheet" href="/assets/css/style.css">
-    <script>(function () { var t = localStorage.getItem('theme'), s = window.matchMedia('(prefers-color-scheme: dark)').matches; if (t === 'dark' || (!t && s)) document.documentElement.classList.add('dark-early'); })();</script>
-    <style>
-        html.dark-early body {
-            background: #0f172a;
-            color: #f8fafc;
-        }
-    </style>
+    <script>(function(){try{if(localStorage.getItem('theme')==='dark'){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

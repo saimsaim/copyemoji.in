@@ -46,10 +46,9 @@
     <meta name="theme-color" content="#6366f1">
     <link rel="stylesheet" href="/assets/css/style.css">
     
-    <script>(function () { var t = localStorage.getItem('theme'), s = window.matchMedia('(prefers-color-scheme: dark)').matches; if (t === 'dark' || (!t && s)) document.documentElement.classList.add('dark-early'); })();</script>
+    <script>(function(){try{if(localStorage.getItem('theme')==='dark'){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
     
     <style>
-        html.dark-early body { background: #0f172a; color: #f8fafc; }
         .content-box { max-width: 800px; margin: 40px auto; background: var(--card); padding: 40px; border-radius: var(--radius); box-shadow: var(--shadow); }
         h1 { color: var(--primary); margin-bottom: 30px; font-size: 32px; }
         h3 { margin-top: 25px; color: var(--text); font-size: 20px; border-left: 4px solid var(--primary); padding-left: 15px; }

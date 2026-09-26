@@ -35,18 +35,22 @@ const categoryIcons = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 🌓 Automatic System Theme Detection
-    const localTheme = localStorage.getItem('theme');
-    const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-    if (localTheme === 'dark' || (!localTheme && systemDark)) {
+    // 🌓 Strict Light default — dark ONLY on explicit user opt-in.
+    // Never auto-apply OS (prefers-color-scheme); the toggle click stores it.
+    // `dark` is kept in sync on <html> (head pre-paint snippet) and <body>.
+    if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.classList.add('dark');
         document.body.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+        document.body.classList.remove('dark');
     }
 
     if(themeToggle) {
         themeToggle.onclick = () => {
-            document.body.classList.toggle('dark');
-            localStorage.setItem('theme', document.body.classList.contains('dark')?'dark':'light');
+            const dark = document.body.classList.toggle('dark');
+            document.documentElement.classList.toggle('dark', dark);
+            localStorage.setItem('theme', dark ? 'dark' : 'light');
         };
     }
 
