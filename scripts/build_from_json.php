@@ -131,7 +131,11 @@ function getHtmlEntity(string $emojiStr): string
 
 function buildCtrTitle(string $name, string $emojiChar): string
 {
-    $t = "$emojiChar $name Emoji — Copy & Paste in 1 Tap";
+    // Dual-intent: "Meaning in Text & Slang" (GSC Page 1-2 winners) + "Copy & Paste"
+    $t = "$emojiChar $name Emoji Meaning in Text & Slang — Copy & Paste";
+    if (mb_strlen($t, 'UTF-8') > 60) {
+        $t = "$emojiChar $name Meaning in Text & Slang — Copy";
+    }
     if (mb_strlen($t, 'UTF-8') > 60) {
         $t = "$emojiChar $name Emoji — Copy & Paste";
     }
@@ -140,9 +144,10 @@ function buildCtrTitle(string $name, string $emojiChar): string
 
 function buildCtrMeta(string $name, string $emojiChar, string $codepoints, string $entity): string
 {
-    $raw = "Copy $name $emojiChar in 1 tap. Meaning, WhatsApp use, Unicode $codepoints, HTML $entity + HD PNG. iPhone & Android.";
+    // Texting/slang angle: captures "meaning in text from a guy/girl", "slang", "WhatsApp use"
+    $raw = "What does $name $emojiChar mean in texting from a guy or girl? Slang meaning, WhatsApp use, Unicode $codepoints + 1-tap copy.";
     $raw = (string) preg_replace('/\s+/', ' ', $raw);
-    return mb_substr(trim($raw), 0, 150, 'UTF-8');
+    return mb_substr(trim($raw), 0, 155, 'UTF-8');
 }
 
 function getBreadcrumbSchema(string $name, string $slugRaw, string $categoryName, string $categorySlug): string
@@ -198,6 +203,60 @@ function getRelatedEmojis(array $all, string $slug, string $cat, int $limit = 12
     });
 
     return array_slice(array_column($scored, 'it'), 0, $limit);
+}
+
+/**
+ * Contextual "Texting & Slang Meaning" guide.
+ * Procedurally generated — NO hardcoded per-emoji boilerplate.
+ * Uniqueness comes from: emoji char, name, category, unicode + deterministic
+ * variant rotation (crc32 of slug with different salts), so neighbouring
+ * pages never read identically. Semantic, CSS-light, no JS.
+ *
+ * @param string $safeName  Already-escaped emoji name
+ * @param string $emojiChar Raw emoji char (safe for HTML output as-is)
+ * @param string $safeCat   Already-escaped category name
+ * @param string $unicode   Already-escaped unicode version
+ * @param string $slugRaw   Canonical slug (for deterministic rotation)
+ */
+function buildSlangGuideHtml(string $safeName, string $emojiChar, string $safeCat, string $unicode, string $slugRaw): string
+{
+    $defs = [
+        "At face value, <strong>{$safeName} {$emojiChar}</strong> stands for its literal {$safeCat} meaning — but in chats it almost always carries tone. Think of {$emojiChar} as shorthand for the feeling you'd get saying \"{$safeName}\" out loud (Unicode {$unicode}).",
+        "The <strong>{$emojiChar} {$safeName}</strong> emoji ({$safeCat}, Unicode {$unicode}) literally depicts {$safeName}, yet texting slang gives it a second life: emphasis, mood and subtext that change with context and who sends it.",
+        "<strong>{$emojiChar}</strong> is officially <strong>{$safeName}</strong> in the {$safeCat} set (Unicode {$unicode}). Dictionary meaning aside, most people meet it first in DMs, captions and status lines — where placement and pairing decide what it really says.",
+    ];
+    $texting = [
+        "What does {$emojiChar} mean in texting? Usually a casual, friendly nudge — \"noted\", \"mood\", \"same\" or playful emphasis — rather than its literal definition. On WhatsApp and Instagram it softens a message, adds humour or signals you don't mean it too seriously. Pairing matters: {$emojiChar} + 😭 = overwhelmed, {$emojiChar} + 🔥 = hype, lone {$emojiChar} = deadpan.",
+        "In texting slang, {$emojiChar} sets tone more than topic. Dropped mid-chat it reads as light and conversational — like a reaction GIF in one character. Teens and group chats use <strong>{$safeName}</strong> for irony, exaggeration or flirty ambiguity; in a caption or bio the same {$emojiChar} reads aesthetic and low-effort. If in doubt, mirror how the other person uses it.",
+        "Texting with {$emojiChar} is about vibe: one <strong>{$safeName}</strong> keeps things breezy, two or three turn up the drama or joke. On Snapchat streaks and IG replies it often just means \"I saw this\" or \"lol same\". Because Apple, Google and Samsung draw {$emojiChar} slightly differently, keep it to 1–2 per message so the tone stays clear.",
+    ];
+    $guyGirl = [
+        "Meaning from a guy vs from a girl? Largely the same — context beats gender. From a guy, {$emojiChar} is typically playful teasing, low-key flirting or \"I'm joking, don't overthink it\". From a girl, {$emojiChar} leans expressive: excitement, sarcasm or softening a \"no\". In both cases, check the words around it — a late-night \"hey {$emojiChar}\" hits different than a midday \"thanks {$emojiChar}\".",
+        "From a guy, <strong>{$safeName} {$emojiChar}</strong> often signals casual interest or banter — he won't type a paragraph, so the emoji does the flirting. From a girl, {$emojiChar} usually tunes the emotional temperature: warm, ironic or deliberately vague. Rule of thumb: flirty + frequent + paired with 👀😍 = interested; single {$emojiChar} on a logistics text = just friendly.",
+        "Guy or girl, read {$emojiChar} by conversation stage. Early chatting: <strong>{$safeName}</strong> is safe, non-committal friendliness. Crushing / dating: the same {$emojiChar} becomes a tone test — playful if they double-text, polite filler if they don't. Don't decode one emoji alone; decode frequency, pairing and reply speed with it.",
+    ];
+
+    $i1 = abs(crc32($slugRaw)) % count($defs);
+    $i2 = abs(crc32($slugRaw . '|texting')) % count($texting);
+    $i3 = abs(crc32($slugRaw . '|guygirl')) % count($guyGirl);
+
+    $p = static function (string $t): string {
+        return "<p style='color: var(--muted); line-height: 1.8; font-size: 16px; margin-bottom: 15px;'>$t</p>";
+    };
+    $h2 = "<h2 style='color: var(--primary); font-size: 24px; margin-bottom: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 10px;'>{$emojiChar} {$safeName} Meaning in Text &amp; Slang</h2>";
+    $h3a = "<h3 style='color: var(--text); font-size: 19px; margin: 22px 0 10px;'>What does {$emojiChar} mean in texting?</h3>";
+    $h3b = "<h3 style='color: var(--text); font-size: 19px; margin: 22px 0 10px;'>Meaning from a guy vs from a girl</h3>";
+
+    $out = "<section class=\"emoji-meaning-guide\" style='text-align: left; margin-top: 40px;'>"
+        . $h2
+        . $p($defs[$i1])
+        . $h3a
+        . $p($texting[$i2])
+        . $h3b
+        . $p($guyGirl[$i3])
+        . $p("Quick tip: tap <strong>Copy</strong> above to grab {$emojiChar}, then paste it into WhatsApp, Snapchat or TikTok. Comparing slang? See the <a href='/emoji-meanings-in-text' style='color:var(--primary); text-decoration:none;'>top 30 texting-slang emojis</a> with 1-tap copy.")
+        . "</section>";
+    return $out;
 }
 
 /**
@@ -387,7 +446,7 @@ foreach ($all as $i => $e) {
     // Unique-per-page keywords (derived from this emoji only)
     $keywordWords = array_unique(array_filter(array_merge(
         explode(' ', strtolower($name)),
-        [strtolower($categoryName), 'emoji', 'copy', 'paste']
+        [strtolower($categoryName), 'emoji', 'meaning', 'texting', 'slang', 'copy', 'paste']
     )));
     $autoKeywords = esc(implode(', ', $keywordWords));
 
@@ -398,6 +457,7 @@ foreach ($all as $i => $e) {
     $breadcrumbNav = "<nav aria-label='Breadcrumb' style='font-size:14px;color:var(--muted);margin-bottom:15px;'><a href='/' style='color:var(--primary);text-decoration:none;'>Home</a> › <a href='/category/$categorySlug' style='color:var(--primary);text-decoration:none;'>$safeCat</a> › $safeName</nav>";
 
     $meaningHtml = buildMeaningHtml($safeName, $emojiChar, $safeCat, esc($unicode), $safeShort);
+    $slangGuideHtml = buildSlangGuideHtml($safeName, $emojiChar, $safeCat, esc($unicode), $slugRaw);
 
     // Deterministic related grid (same category weighted, alphabetical tiebreak)
     $relatedHtml = '';
@@ -459,7 +519,7 @@ foreach ($all as $i => $e) {
         <div class='content-box'>
             <div style='text-align:center;'>
                 <div style='font-size: 120px; margin-bottom: 20px;'>$emojiChar</div>
-                <h1 style='font-size: 32px; margin-bottom: 20px; color: var(--text);'>$safeName Emoji Meaning</h1>
+                <h1 style='font-size: 32px; margin-bottom: 20px; color: var(--text);'>$safeName Emoji Meaning in Text & Slang</h1>
                 <div style='display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px;'>
                     <button class='submit-btn' onclick='copyEmojiMain(\"$emojiChar\")' style='width:auto; padding:15px 40px; font-size:20px; margin-top:0;'>Copy $emojiChar</button>
                     <button class='submit-btn btn-secondary' onclick='downloadEmojiPNG(\"$emojiChar\", \"$slugRaw\")' style='width:auto; padding:15px 40px; font-size:20px; margin-top:0;'>⬇️ Download PNG</button>
@@ -467,6 +527,8 @@ foreach ($all as $i => $e) {
             </div>
 
             <section style='text-align: left; margin-top: 50px;'>$meaningHtml</section>
+
+            $slangGuideHtml
 
             <section style='text-align: left; margin-top: 40px;'>
                 <h2 style='color: var(--primary); font-size: 24px; margin-bottom: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 10px;'>Technical Information</h2>
@@ -553,7 +615,7 @@ $addUrl = static function (string $loc, string $lastmod, string $freq, string $p
 $addUrl(SITE_URL . '/', $today, 'daily', '1.0');
 
 // 2. Long-tail hubs (0.9)
-foreach (['heart-emojis', 'symbols-for-discord', 'aesthetic-emojis'] as $hub) {
+foreach (['heart-emojis', 'symbols-for-discord', 'aesthetic-emojis', 'emoji-meanings-in-text'] as $hub) {
     $addUrl(SITE_URL . "/$hub", $today, 'weekly', '0.9');
 }
 
@@ -574,7 +636,7 @@ if (file_put_contents($sitemapPath, $xml) === false) {
     exit(1);
 }
 
-$hubCount = 3;
+$hubCount = 4;
 $catCount = count($categories);
 out('✅ Sitemap regenerated: homepage (1.0) + ' . $hubCount . ' hubs (0.9) + ' . $catCount . ' categories (0.8) + ' . count($emojiUrls) . ' emojis (0.6).');
 out('🎉 <strong>Done! 100% DB-free build complete. No MySQL/PDO used.</strong>');

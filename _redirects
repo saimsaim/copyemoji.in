@@ -9,6 +9,7 @@
 /heart-emojis.html          /heart-emojis          301
 /symbols-for-discord.html  /symbols-for-discord  301
 /aesthetic-emojis.html     /aesthetic-emojis     301
+/emoji-meanings-in-text.html  /emoji-meanings-in-text  301
 
 # Duplicate category consolidation (short -> canonical long)
 # Homepage links to short slugs, sitemap lists long slugs - unify to long
