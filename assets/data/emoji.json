@@ -33088,8 +33088,8 @@
                 "emoji": "#️⃣",
                 "skin_tone_support": false,
                 "skin_tone_support_unicode_version": "",
-                "name": "Keycap Number Sign",
-                "slug": "keycap-number-sign",
+                "name": "Keycap Hash",
+                "slug": "keycap-hash",
                 "unicode_version": "0.6",
                 "emoji_version": "0.6"
             },
