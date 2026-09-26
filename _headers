@@ -3,10 +3,23 @@
 # ==========================================
 
 # -------------------------------
-# 🔹 Assets (CSS, JS, Fonts)
+# 🔹 Assets (CSS, JS, Icons - immutable versioned)
 # -------------------------------
-/assets/*
+/assets/css/*
   Cache-Control: public, max-age=31536000, immutable
+/assets/js/*
+  Cache-Control: public, max-age=31536000, immutable
+/assets/icons/*
+  Cache-Control: public, max-age=31536000, immutable
+/assets/images/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# -------------------------------
+# 🔹 Data JSON (short cache, noindex - 1.4MB file, changes on rebuild)
+# -------------------------------
+/assets/data/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=3600
+  X-Robots-Tag: noindex, follow
 
 # -------------------------------
 # 🔹 Emoji + Category Pages
@@ -44,6 +57,13 @@
 /
   Cache-Control: public, max-age=3600, stale-while-revalidate=600
   X-Robots-Tag: index, follow
+
+# -------------------------------
+# 🔒 Private: never index build scripts
+# -------------------------------
+/scripts/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
 
 # -------------------------------
 # 🔹 Security Headers (Bonus 🔥)

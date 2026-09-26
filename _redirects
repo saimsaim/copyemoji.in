@@ -5,3 +5,24 @@
 /disclaimer.html    /disclaimer 301
 /privacy.html       /privacy    301
 /features.html      /features   301
+/kaomoji.html       /kaomoji    301
+/heart-emojis.html          /heart-emojis          301
+/symbols-for-discord.html  /symbols-for-discord  301
+/aesthetic-emojis.html     /aesthetic-emojis     301
+
+# Duplicate category consolidation (short -> canonical long)
+# Homepage links to short slugs, sitemap lists long slugs - unify to long
+/category/smileys-emotion  /category/smileys-and-emotion  301
+/category/people-body      /category/people-and-body      301
+/category/animals-nature   /category/animals-and-nature   301
+/category/food-drink       /category/food-and-drink       301
+/category/travel-places    /category/travel-and-places    301
+
+# Known bad emoji slugs
+/emoji/piata                          /emoji/pinata                    301
+/emoji/flag-antigua--barbuda          /emoji/flag-antigua-barbuda      301
+/emoji/flag-bosnia--herzegovina       /emoji/flag-bosnia-herzegovina   301
+/emoji/keycap-                        /emoji/keycap-hash              301
+
+# Block build scripts from public (Cloudflare Pages 404)
+/scripts/*  /404.html  404

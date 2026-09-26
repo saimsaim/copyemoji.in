@@ -112,8 +112,9 @@ function greetUserSimple() {
     }, 3000);
 }
 
+const EMOJI_DATA_VERSION = '1.5'; // bump only on rebuild in scripts/export_json.php
 function loadEmojiData() {
-    fetch('assets/data/emoji.json?v=' + Date.now()) 
+    fetch('/assets/data/emoji.json?v=' + EMOJI_DATA_VERSION)
     .then(r => r.json())
     .then(data => {
         allData = data; 
@@ -245,8 +246,8 @@ if(searchInput) {
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => {
             document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
-            const term = e.target.value.toLowerCase();
-            const filtered = allEmojis.filter(item => item.name.toLowerCase().includes(term));
+            const term = e.target.value.toLowerCase().trim();
+            const filtered = term === '' ? allEmojis : allEmojis.filter(item => (item.search_text || item.name.toLowerCase()).includes(term));
             renderEmojis(filtered);
         }, 300);
     });
@@ -507,7 +508,8 @@ if ('serviceWorker' in navigator) {
 
 window.addEventListener('appinstalled', (evt) => {
   // Custom install button ko hide kar do taaki baar-baar na dikhe
-  document.getElementById('myCustomInstallBtn').style.display = 'none';
+  const installBtn = document.getElementById('myCustomInstallBtn');
+  if (installBtn) installBtn.style.display = 'none';
   console.log('Bhai ki App successfully install ho gayi! 🚀');
 });
 

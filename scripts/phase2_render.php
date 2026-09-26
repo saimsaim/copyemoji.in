@@ -128,6 +128,20 @@ function getHtmlEntity(string $emojiStr): string {
     return implode(" ", $entities);
 }
 
+function buildCtrTitle(string $name, string $emojiChar): string {
+    $t = "$emojiChar $name Emoji — Copy & Paste in 1 Tap";
+    if (mb_strlen($t, 'UTF-8') > 60) {
+        $t = "$emojiChar $name Emoji — Copy & Paste";
+    }
+    return $t;
+}
+
+function buildCtrMeta(string $name, string $emojiChar, string $codepoints, string $entity): string {
+    $raw = "Copy $name $emojiChar in 1 tap. Meaning, WhatsApp use, Unicode $codepoints, HTML $entity + HD PNG. iPhone & Android.";
+    $raw = preg_replace('/\s+/', ' ', $raw);
+    return mb_substr(trim($raw), 0, 150, 'UTF-8');
+}
+
 function getDescription(string $slug, array $dbContent, string $name, string $emojiChar, string $category, string $unicode, string $version): string {
     if (isset($dbContent[$slug]) && !empty($dbContent[$slug]['description'])) {
         return $dbContent[$slug]['description']; 
@@ -163,25 +177,53 @@ function getFaqHtml(string $slug, array $dbContent, string $name, string $emojiC
     <p style='color: var(--muted); margin-bottom: 0; line-height: 1.6;'>Click the 'Download PNG' button to get a transparent HD image.</p>";
 }
 
-function getFaqSchema(string $slug, array $dbContent, string $name, string $emojiChar, string $htmlEntity): string {
-    if (isset($dbContent[$slug]) && !empty($dbContent[$slug]['faq_json'])) {
-        $faqs = json_decode($dbContent[$slug]['faq_json'], true);
-        if (is_array($faqs) && count($faqs) >= 3) {
-            $entities = [];
-            foreach ($faqs as $faq) {
-                $entities[] = [
-                    "@type"          => "Question",
-                    "name"           => $faq['q'] ?? '',
-                    "acceptedAnswer" => ["@type" => "Answer", "text" => $faq['a'] ?? '']
-                ];
-            }
-            return json_encode(["@context" => "https://schema.org", "@type" => "FAQPage", "mainEntity" => $entities]);
-        }
+function getFaqSchemaOrNull(string $slug, array $dbContent): ?string {
+    if (!isset($dbContent[$slug]) || empty($dbContent[$slug]['faq_json'])) {
+        return null;
     }
-    return json_encode(["@context" => "https://schema.org", "@type" => "FAQPage", "mainEntity" => [
-        ["@type" => "Question", "name" => "What does $name emoji mean?", "acceptedAnswer" => ["@type" => "Answer", "text" => "The $name emoji ($emojiChar) is a widely used symbol."]],
-        ["@type" => "Question", "name" => "What is the HTML entity for $name emoji?", "acceptedAnswer" => ["@type" => "Answer", "text" => "The HTML entity code for $emojiChar is $htmlEntity."]],
-    ]]);
+    $faqs = json_decode($dbContent[$slug]['faq_json'], true);
+    if (!is_array($faqs) || count($faqs) < 3) {
+        return null;
+    }
+    $entities = [];
+    foreach ($faqs as $faq) {
+        if (empty($faq['q']) || empty($faq['a'])) {
+            continue;
+        }
+        $entities[] = [
+            "@type"          => "Question",
+            "name"           => $faq['q'],
+            "acceptedAnswer" => ["@type" => "Answer", "text" => $faq['a']]
+        ];
+    }
+    if (count($entities) < 3) {
+        return null;
+    }
+    return json_encode(["@context" => "https://schema.org", "@type" => "FAQPage", "mainEntity" => $entities], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+}
+
+function getBreadcrumbSchema(string $name, string $slugRaw, string $categoryName, string $categorySlug): string {
+    return json_encode(["@context" => "https://schema.org", "@type" => "BreadcrumbList", "itemListElement" => [
+        ["@type" => "ListItem", "position" => 1, "name" => "Home", "item" => "https://copyemoji.in/"],
+        ["@type" => "ListItem", "position" => 2, "name" => $categoryName, "item" => "https://copyemoji.in/category/$categorySlug"],
+        ["@type" => "ListItem", "position" => 3, "name" => $name, "item" => "https://copyemoji.in/emoji/$slugRaw"]
+    ]], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+}
+
+function getRelatedEmojis(array $list, string $slug, int $limit = 12): array {
+    $base = array_filter(explode('-', strtolower($slug)));
+    $scored = [];
+    foreach ($list as $it) {
+        if (($it['slug'] ?? '') === $slug) {
+            continue;
+        }
+        $toks = array_filter(explode('-', strtolower($it['slug'] ?? '')));
+        $overlap = count(array_intersect($base, $toks));
+        $bonus = (($toks[0] ?? '') === ($base[0] ?? '') && ($base[0] ?? '') !== '') ? 2 : 0;
+        $scored[] = ['it' => $it, 's' => $overlap * 10 + $bonus, 'k' => $it['slug'] ?? ''];
+    }
+    usort($scored, fn($a, $b) => $b['s'] <=> $a['s'] ?: strcmp($a['k'], $b['k']));
+    return array_slice(array_column($scored, 'it'), 0, $limit);
 }
 
 // ─── HEADER & FOOTER ───────────────────────────────────────
@@ -254,11 +296,20 @@ foreach ($data as $catKey => $catObj) {
         );
         $autoKeywords = implode(", ", $keywordWords);
 
-        // ── DB se ya fallback ──
+        // ── DB se ya fallback (CTR-optimized, boilerplate FAQ suppressed) ──
         $richDescription = getDescription($slugRaw, $dbContent, $name, $emojiChar, $categoryName, $unicode, $version);
         $faqHtml         = getFaqHtml($slugRaw, $dbContent, $name, $emojiChar, $htmlEntity);
-        $faqJsonLd       = getFaqSchema($slugRaw, $dbContent, $name, $emojiChar, $htmlEntity);
-        $metaDesc        = "Copy the $name emoji ($emojiChar). Meaning, HTML Entity ($htmlEntity), Codepoints ($emojiCodepoints), Keywords: $autoKeywords.";
+        $faqJsonLd       = getFaqSchemaOrNull($slugRaw, $dbContent);
+        $crumbJsonLd     = getBreadcrumbSchema($name, $slugRaw, $categoryName, $categorySlug);
+        $schemaHtml      = "<script type='application/ld+json'>$crumbJsonLd</script>";
+        if ($faqJsonLd !== null) {
+            $schemaHtml .= "\n    <script type='application/ld+json'>$faqJsonLd</script>";
+        }
+        $ctrTitle  = buildCtrTitle($name, $emojiChar);
+        $metaDesc  = buildCtrMeta($name, $emojiChar, $emojiCodepoints, $htmlEntity);
+        $safeTitle = htmlspecialchars($ctrTitle, ENT_QUOTES, 'UTF-8');
+        $safeDesc  = htmlspecialchars($metaDesc, ENT_QUOTES, 'UTF-8');
+        $breadcrumbNav = "<nav aria-label='Breadcrumb' style='font-size:14px;color:var(--muted);margin-bottom:15px;'><a href='/' style='color:var(--primary);text-decoration:none;'>Home</a> › <a href='/category/$categorySlug' style='color:var(--primary);text-decoration:none;'>$categoryName</a> › $name</nav>";
 
         // Category grid HTML logic
         $categoryGridHtml .= "
@@ -268,39 +319,44 @@ foreach ($data as $catKey => $catObj) {
             <button class='download-btn' style='pointer-events:none; background:rgba(99,102,241,0.1); color:#4338ca; border:1px solid rgba(99,102,241,0.2); border-radius:8px; padding:6px 0; width:100%; font-size:12px; font-weight:700;'>Copy</button>
         </div>";
 
-        // Related emojis logic
+        // Related emojis logic (deterministic: shared slug tokens + alphabetical tiebreak)
         $relatedHtml = '';
-        if (count($emojisList) > 1) {
-            $relatedKeys = array_rand($emojisList, min(12, count($emojisList)));
-            foreach ((array)$relatedKeys as $rk) {
-                if ($emojisList[$rk]['slug'] === $slugRaw) continue;
-                $relChar = $emojisList[$rk]['emoji'];
-                $relSlug = $emojisList[$rk]['slug'];
-                $relatedHtml .= "
-                <a href='/emoji/$relSlug' class='emoji-item' style='text-decoration:none;'>
+        foreach (getRelatedEmojis($emojisList, $slugRaw, 12) as $rel) {
+            $relChar = $rel['emoji'];
+            $relSlug = $rel['slug'];
+            $relName = htmlspecialchars(ucwords(str_replace('-', ' ', $relSlug)), ENT_QUOTES, 'UTF-8');
+            $relatedHtml .= "
+                <a href='/emoji/$relSlug' class='emoji-item' title='$relName' style='text-decoration:none;'>
                     <div class='emoji-char'>$relChar</div>
-                    <div class='download-btn' style='text-align:center;'>View</div>
+                    <div class='download-btn' style='text-align:center;'>$relName</div>
                 </a>";
-            }
         }
 
-        // ── FULL HTML FOR SINGLE EMOJI PAGE ──
+        // ── FULL HTML FOR SINGLE EMOJI PAGE (CTR-optimized head) ──
         $fullHtml = "<!DOCTYPE html>
 <html lang='en'>
 <head>
 <script src='https://quge5.com/88/tag.min.js' data-zone='227917' async data-cfasync='false'></script>
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <title>$name Emoji $emojiChar - HTML Entity, Meaning & Copy</title>
-    <meta name='description' content='$metaDesc'>
+    <title>$safeTitle</title>
+    <meta name='description' content='$safeDesc'>
     <meta name='keywords' content='$autoKeywords'>
+    <meta name='robots' content='index, follow, max-image-preview:large'>
     <link rel='manifest' href='/manifest.json'>
     <meta name='theme-color' content='#6366f1'>
     <link rel='canonical' href='https://copyemoji.in/emoji/$slugRaw'>
-    <meta property='og:title' content='$name Emoji $emojiChar - Meaning & Copy'>
-    <meta property='og:description' content='$metaDesc'>
+    <meta property='og:type' content='article'>
+    <meta property='og:title' content='$safeTitle'>
+    <meta property='og:description' content='$safeDesc'>
     <meta property='og:url' content='https://copyemoji.in/emoji/$slugRaw'>
-    <meta property='og:type' content='website'>
+    <meta property='og:image' content='https://copyemoji.in/assets/images/preview-card.png'>
+    <meta property='og:image:width' content='1200'>
+    <meta property='og:image:height' content='630'>
+    <meta name='twitter:card' content='summary_large_image'>
+    <meta name='twitter:title' content='$safeTitle'>
+    <meta name='twitter:description' content='$safeDesc'>
+    <meta name='twitter:image' content='https://copyemoji.in/assets/images/preview-card.png'>
     <link rel='stylesheet' href='/assets/css/style.css'>
     <script>(function(){var t=localStorage.getItem('theme'),s=window.matchMedia('(prefers-color-scheme: dark)').matches;if(t==='dark'||(!t&&s))document.documentElement.classList.add('dark-early');})();</script>
     <style>html.dark-early body{background:#0f172a;color:#f8fafc;}</style>
@@ -308,7 +364,7 @@ foreach ($data as $catKey => $catObj) {
     <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
     <link rel='preload' as='style' href='https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap' onload=\"this.onload=null;this.rel='stylesheet'\">
     <noscript><link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap'></noscript>
-    <script type='application/ld+json'>$faqJsonLd</script>
+    $schemaHtml
     <style>
         body, .content-box, .technical-box, .faq-box, .emoji-item {
             transition: background 0.5s ease-in-out, color 0.5s ease-in-out, border-color 0.5s ease-in-out, box-shadow 0.5s ease-in-out !important;
@@ -321,6 +377,7 @@ foreach ($data as $catKey => $catObj) {
 <body>
     $headerHtml
     <main class='main-wrapper'>
+        $breadcrumbNav
         <div class='content-box'>
             <div style='text-align:center;'>
                 <div style='font-size: 120px; margin-bottom: 20px;'>$emojiChar</div>
@@ -364,7 +421,7 @@ foreach ($data as $catKey => $catObj) {
     </main>
     <div id='toast' class='toast'>Copied!</div>
     $footerHtml
-    <script src='/assets/js/main.js?v=1.4' defer></script>
+    <script src='/assets/js/main.js?v=1.5' defer></script>
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();
         function copyEmojiMain(char) {
@@ -434,7 +491,7 @@ foreach ($data as $catKey => $catObj) {
     </main>
     <div id='toast' class='toast'>Copied!</div>
     $footerHtml
-    <script src='/assets/js/main.js?v=1.4' defer></script>
+    <script src='/assets/js/main.js?v=1.5' defer></script>
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();
         function copyEmojiMain(char) {
