@@ -39,6 +39,25 @@ function out(string $msg): void
 // ─── CONFIG ────────────────────────────────────────────────
 define('SITE_URL', 'https://copyemoji.in');
 
+// Slugs that 301 elsewhere via _redirects — never submit as canonical in sitemap.
+// (Files may still exist on disk; redirects + self-canonicals left untouched.)
+define('SITEMAP_EXCLUDE_SLUGS', serialize([
+    'piata',                       // 301 -> pinata
+    'flag-antigua--barbuda',       // 301 -> flag-antigua-barbuda
+    'flag-bosnia--herzegovina',    // 301 -> flag-bosnia-herzegovina
+]));
+
+// Indexable static routes missing from DB-free builds (kept in sync with _redirects + _headers).
+define('SITEMAP_STATIC_ROUTES', serialize([
+    ['path' => '/kaomoji',    'freq' => 'weekly',  'priority' => '0.9'],
+    ['path' => '/about',      'freq' => 'monthly', 'priority' => '0.8'],
+    ['path' => '/contact',    'freq' => 'monthly', 'priority' => '0.8'],
+    ['path' => '/features',   'freq' => 'monthly', 'priority' => '0.7'],
+    ['path' => '/privacy',    'freq' => 'monthly', 'priority' => '0.6'],
+    ['path' => '/terms',      'freq' => 'monthly', 'priority' => '0.6'],
+    ['path' => '/disclaimer', 'freq' => 'monthly', 'priority' => '0.6'],
+]));
+
 $basePath    = realpath(__DIR__ . '/..');
 if ($basePath === false) {
     $basePath = dirname(__DIR__);
@@ -383,7 +402,7 @@ $headerHtml = '
 <header class="navbar">
     <div class="logo-area">
         <a href="/" style="text-decoration: none; color: inherit;">
-            <h1>😊 CopyEmoji<span class="highlight">.in</span></h1>
+            <div class="site-logo">😊 CopyEmoji<span class="highlight">.in</span></div>
         </a>
     </div>
     <div class="controls">
@@ -585,8 +604,17 @@ foreach ($all as $i => $e) {
         continue;
     }
 
-    $emojiUrls[] = SITE_URL . "/emoji/$slugRaw";
+    static $sitemapExcludes = null;
+    if ($sitemapExcludes === null) {
+        $sitemapExcludes = unserialize(SITEMAP_EXCLUDE_SLUGS);
+    }
+    if (!in_array($slugRaw, $sitemapExcludes, true)) {
+        $emojiUrls[] = SITE_URL . "/emoji/$slugRaw";
+    }
     $built++;
+
+    // NOTE: file output above is intentionally left untouched for excluded slugs;
+    // only sitemap submission is suppressed (redirect sources must never be canonical).
 
     if ($built % 500 === 0) {
         out("… $built / $total built");
@@ -616,6 +644,11 @@ $addUrl(SITE_URL . '/', $today, 'daily', '1.0');
 // 2. Long-tail hubs (0.9)
 foreach (['heart-emojis', 'symbols-for-discord', 'aesthetic-emojis', 'emoji-meanings-in-text'] as $hub) {
     $addUrl(SITE_URL . "/$hub", $today, 'weekly', '0.9');
+}
+
+// 2b. Static indexable routes (absent from DB-free builds before C2 fix)
+foreach (unserialize(SITEMAP_STATIC_ROUTES) as $route) {
+    $addUrl(SITE_URL . $route['path'], $today, $route['freq'], $route['priority']);
 }
 
 // 3. Canonical categories (0.8)

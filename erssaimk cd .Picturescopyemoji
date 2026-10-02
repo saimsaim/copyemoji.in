@@ -1,0 +1,51 @@
+warning: in the working copy of 'about.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'aesthetic-emojis.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'category/activities.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'category/animals-and-nature.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'category/flags.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'category/food-and-drink.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'category/objects.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'category/people-and-body.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'category/smileys-and-emotion.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'category/symbols.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'category/travel-and-places.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'contact.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'disclaimer.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'emoji-meanings-in-text.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'features.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'heart-emojis.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'kaomoji.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'privacy.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/build_from_json.php', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'sitemap.xml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'symbols-for-discord.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'terms.html', LF will be replaced by CRLF the next time Git touches it
+ _headers                          | 28 [32m+++++++++++++++++[m
+ about.html                        |  7 [32m+++[m[31m--[m
+ aesthetic-emojis.html             |  2 [32m+[m[31m-[m
+ assets/css/style.css              |  6 [32m++[m[31m--[m
+ category/activities.html          |  2 [32m+[m[31m-[m
+ category/animals-and-nature.html  |  2 [32m+[m[31m-[m
+ category/flags.html               |  2 [32m+[m[31m-[m
+ category/food-and-drink.html      |  2 [32m+[m[31m-[m
+ category/objects.html             |  2 [32m+[m[31m-[m
+ category/people-and-body.html     |  2 [32m+[m[31m-[m
+ category/smileys-and-emotion.html |  2 [32m+[m[31m-[m
+ category/symbols.html             |  2 [32m+[m[31m-[m
+ category/travel-and-places.html   |  2 [32m+[m[31m-[m
+ contact.html                      |  5 [32m+[m[31m--[m
+ disclaimer.html                   |  7 [32m+++[m[31m--[m
+ emoji-meanings-in-text.html       |  2 [32m+[m[31m-[m
+ features.html                     |  8 [32m++[m[31m---[m
+ heart-emojis.html                 |  2 [32m+[m[31m-[m
+ index.html                        |  6 [32m++[m[31m--[m
+ kaomoji.html                      |  4 [32m+[m[31m--[m
+ llms.txt                          |  8 [32m++[m[31m---[m
+ privacy.html                      |  2 [32m+[m[31m-[m
+ robots.txt                        |  2 [32m++[m
+ scripts/build_from_json.php       | 37 [32m++++++++++++++++++++[m[31m--[m
+ scripts/phase2_render.php         |  2 [32m+[m[31m-[m
+ sitemap.xml                       | 66 [32m++++++++++++++++++++++++++++[m[31m-----------[m
+ symbols-for-discord.html          |  2 [32m+[m[31m-[m
+ terms.html                        |  7 [32m+++[m[31m--[m
+ 28 files changed, 160 insertions(+), 61 deletions(-)

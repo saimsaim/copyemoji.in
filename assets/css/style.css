@@ -88,7 +88,8 @@ body.dark .navbar {
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.navbar h1 {
+.navbar h1,
+.navbar .site-logo {
     font-size: 24px;
     font-weight: 700;
     letter-spacing: -0.5px;
@@ -722,7 +723,8 @@ body.dark .kaomoji-card {
         padding: 12px 3%;
     }
 
-    .navbar h1 {
+    .navbar h1,
+    .navbar .site-logo {
         font-size: 20px;
     }
 

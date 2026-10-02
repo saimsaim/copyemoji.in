@@ -51,6 +51,34 @@
   Cache-Control: public, max-age=604800
   X-Robots-Tag: index, follow
 
+/kaomoji
+  Cache-Control: public, max-age=604800
+  X-Robots-Tag: index, follow
+
+/heart-emojis
+  Cache-Control: public, max-age=604800
+  X-Robots-Tag: index, follow
+
+/aesthetic-emojis
+  Cache-Control: public, max-age=604800
+  X-Robots-Tag: index, follow
+
+/symbols-for-discord
+  Cache-Control: public, max-age=604800
+  X-Robots-Tag: index, follow
+
+/emoji-meanings-in-text
+  Cache-Control: public, max-age=604800
+  X-Robots-Tag: index, follow
+
+/contact
+  Cache-Control: public, max-age=604800
+  X-Robots-Tag: index, follow
+
+/disclaimer
+  Cache-Control: public, max-age=604800
+  X-Robots-Tag: index, follow
+
 # -------------------------------
 # 🔹 Homepage
 # -------------------------------

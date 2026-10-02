@@ -2,6 +2,8 @@ User-agent: *
 Allow: /assets/css/
 Allow: /assets/js/
 Allow: /assets/icons/
+Allow: /assets/data/emoji.json
+Allow: /assets/data/kaomoji.json
 Disallow: /assets/data/
 Disallow: /scripts/
 Disallow: /vendor/

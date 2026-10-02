@@ -10,9 +10,9 @@
 - **Key focus**: Real-world WhatsApp usage, Indian cultural context, chat examples.
 
 ## High-Value Content (Crawl Priority 1)
-- [Smileys & Emotion](https://copyemoji.in/category/smileys-emotion)
-- [People & Body](https://copyemoji.in/category/people-body)
-- [Food & Drink](https://copyemoji.in/category/food-drink)
+- [Smileys & Emotion](https://copyemoji.in/category/smileys-and-emotion)
+- [People & Body](https://copyemoji.in/category/people-and-body)
+- [Food & Drink](https://copyemoji.in/category/food-and-drink)
 - [Objects](https://copyemoji.in/category/objects)
 - [Symbols](https://copyemoji.in/category/symbols)
 - [Flags](https://copyemoji.in/category/flags)
@@ -50,7 +50,7 @@
 > Source: https://copyemoji.in/emoji/[slug]
 
 ## Technical Discovery
-- **Primary sitemap**: https://copyemoji.in/sitemap-core-1.xml
+- **Primary sitemap**: https://copyemoji.in/sitemap.xml
 - **Full sitemap**: https://copyemoji.in/sitemap.xml
 - **Robots.txt**: https://copyemoji.in/robots.txt
 - **Content freshness**: Weekly updates to popular pages.
